@@ -1,0 +1,84 @@
+# Bookstore (BookHaven)
+
+A modern, full-stack online bookstore built with Next.js, TypeScript, and Tailwind CSS. This project demonstrates scalable architecture, professional UI/UX, and CI/CD best practices.
+
+## Features
+
+- **Modern UI/UX**: Clean, responsive design with Tailwind CSS
+- **TypeScript**: Full type safety throughout the application
+- **Next.js 15**: Latest features with App Router
+- **Component Library**: Reusable UI components with Radix UI
+- **CI/CD Pipeline**: Automated testing and deployment
+- **Docker Support**: Containerized development and deployment
+
+## Tech Stack
+
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS, Radix UI components
+- **Testing**: Jest, Playwright
+- **CI/CD**: GitHub Actions
+- **Containerization**: Docker
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 20+
+- npm or pnpm
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/GontseDev404/bookstore.git
+   cd bookstore
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables:**
+   ```bash
+   cp .env.example .env.local
+   ```
+
+4. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open [http://localhost:3000](http://localhost:3000)** in your browser.
+
+## Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run type-check` - Run TypeScript type checking
+- `npm test` - Run unit tests
+- `npm run test:ci` - Run tests in CI environment
+- `npm run test:e2e` - Run end-to-end tests
+
+## Docker
+
+### Build and run with Docker:
+
+```bash
+docker build -t bookstore-app .
+docker run -p 3000:3000 bookstore-app
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License. 
