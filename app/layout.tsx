@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
   title: "BookHaven - Your Online Bookstore for All Ages",
-  description: "Discover your next favorite book at BookHaven - From children's literature to staff favorites",
+  description: "Discover your next favorite book at BookHaven - Where every reader finds their perfect story, from children's literature to staff-curated favorites",
     generator: 'v0.dev'
 }
 
