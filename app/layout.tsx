@@ -6,8 +6,8 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-  title: "2BOOKS - Your Online Bookstore for All Ages",
-  description: "Discover your next favorite book at 2BOOKS - From children's literature to bestsellers",
+  title: "BookHaven - Your Online Bookstore for All Ages",
+  description: "Discover your next favorite book at BookHaven - Where every reader finds their perfect story, from children's literature to staff-curated favorites",
     generator: 'v0.dev'
 }
 

@@ -8,8 +8,8 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-4">
           <div>
             <Link href="/" className="flex items-center gap-2">
-              <Image src="/images/2books-logo.png" alt="2BOOKS Logo" width={40} height={40} className="h-10 w-auto" />
-              <span className="text-xl font-bold">2BOOKS</span>
+                      <Image src="/images/2books-logo.png" alt="BookHaven Logo" width={40} height={40} className="h-10 w-auto" />
+        <span className="text-xl font-bold">BookHaven</span>
             </Link>
             <p className="mt-4 text-sm text-muted-foreground">
               Your destination for the best books at the best prices.
@@ -25,8 +25,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/bestsellers" className="text-sm text-muted-foreground hover:text-foreground">
-                  Bestsellers
+                            <Link href="/bestsellers" className="text-sm text-muted-foreground hover:text-foreground">
+              Staff Favorites
                 </Link>
               </li>
               <li>
@@ -91,7 +91,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} 2BOOKS. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} BookHaven. All rights reserved.</p>
         </div>
       </div>
     </footer>
