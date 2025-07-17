@@ -198,7 +198,7 @@ By weaving together themes of identity, acceptance, and resilience, the author i
 
               <div className="flex flex-col gap-4 sm:flex-row">
                 <Button size="lg" className="flex-1 bg-amber-500 hover:bg-amber-600">
-                  Add to Cart
+                  Add to Library
                 </Button>
                 <Button
                   size="lg"

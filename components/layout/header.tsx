@@ -31,8 +31,8 @@ export function Header() {
                   <Link href="/books" className="flex items-center gap-2 font-semibold">
                     Books
                   </Link>
-                  <Link href="/bestsellers" className="flex items-center gap-2 font-semibold">
-                    Bestsellers
+                          <Link href="/bestsellers" className="flex items-center gap-2 font-semibold">
+          Staff Favorites
                   </Link>
                   <Link href="/new-releases" className="flex items-center gap-2 font-semibold">
                     New Releases
@@ -44,8 +44,8 @@ export function Header() {
               </SheetContent>
             </Sheet>
             <Link href="/" className="flex items-center gap-2">
-              <Image src="/images/2books-logo.png" alt="2BOOKS Logo" width={40} height={40} className="h-10 w-auto" />
-              <span className="hidden text-xl font-bold md:inline-block">2BOOKS</span>
+                      <Image src="/images/2books-logo.png" alt="BookHaven Logo" width={40} height={40} className="h-10 w-auto" />
+        <span className="hidden text-xl font-bold md:inline-block">BookHaven</span>
             </Link>
           </div>
 
@@ -93,8 +93,8 @@ export function Header() {
               </Link>
             </li>
             <li>
-              <Link href="/bestsellers" className="text-sm font-medium hover:text-primary">
-                Bestsellers
+                          <Link href="/bestsellers" className="text-sm font-medium hover:text-primary">
+              Staff Favorites
               </Link>
             </li>
             <li>

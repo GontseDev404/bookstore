@@ -8,8 +8,8 @@ import { CategoryIcon } from "@/components/category-icon"
 import { Input } from "@/components/ui/input"
 
 export default function HomePage() {
-  // Bestsellers data
-  const bestsellers = [
+  // Staff Favorites data
+const staffFavorites = [
     {
       id: "silver-feet-and-her-wonder",
       title: "Silver Feet and Her Wonder",
@@ -445,17 +445,17 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Bestsellers Section */}
+        {/* Staff Favorites Section */}
         <section className="container mx-auto px-4 py-8">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-2xl font-bold">Bestsellers</h2>
+            <h2 className="text-2xl font-bold">Staff Favorites</h2>
             <Link href="/bestsellers" className="text-sm font-medium text-amber-700 hover:underline">
               See All
             </Link>
           </div>
           <div className="relative">
             <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-              {bestsellers.map((book) => (
+              {staffFavorites.map((book) => (
                 <Link key={book.id} href={book.link} className="group">
                   <div className="overflow-hidden rounded-md border bg-muted">
                     <Image
@@ -785,7 +785,7 @@ export default function HomePage() {
         <section className="container mx-auto px-4 py-8 bg-gradient-to-r from-slate-100 to-white rounded-lg my-8">
           <div className="mb-6 flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-slate-800">2BOOKS Club Picks</h2>
+              <h2 className="text-2xl font-bold text-slate-800">BookHaven Club Picks</h2>
               <p className="text-sm text-slate-600">Join our monthly book discussions</p>
             </div>
             <Link href="/book-club" className="text-sm font-medium text-amber-700 hover:underline">
