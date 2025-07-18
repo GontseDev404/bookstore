@@ -40,14 +40,14 @@ A modern, full-stack online bookstore built with Next.js, TypeScript, and Tailwi
    ```
 
 3. **Set up environment variables:**
-   ```bash
+```bash
    cp .env.example .env.local
-   ```
+```
 
 4. **Run the development server:**
-   ```bash
-   npm run dev
-   ```
+```bash
+npm run dev
+```
 
 5. **Open [http://localhost:3000](http://localhost:3000)** in your browser.
 
