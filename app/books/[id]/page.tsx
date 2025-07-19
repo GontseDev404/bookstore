@@ -1,4 +1,7 @@
+"use client"
+
 import { Heart, Share2 } from "lucide-react"
+import { useEffect } from "react"
 import { AppShell } from "@/components/layout/app-shell"
 import { BookCover } from "@/components/book/book-cover"
 import { BookRating } from "@/components/book/book-rating"
@@ -8,6 +11,7 @@ import { RelatedBooks } from "@/components/book/related-books"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { getBookById } from "@/lib/book-data"
+import { useTrackBookView } from "@/components/recently-viewed"
 import { notFound } from "next/navigation"
 
 interface BookPageProps {
@@ -16,8 +20,15 @@ interface BookPageProps {
   };
 }
 
-export default async function BookPage({ params }: BookPageProps) {
-  const book = getBookById(await params.id);
+export default function BookPage({ params }: BookPageProps) {
+  const book = getBookById(params.id);
+  const trackBookView = useTrackBookView();
+
+  useEffect(() => {
+    if (book) {
+      trackBookView(book.id);
+    }
+  }, [book, trackBookView]);
 
   if (!book) {
     notFound();
@@ -64,19 +75,20 @@ export default async function BookPage({ params }: BookPageProps) {
                 <p>{book.description}</p>
               </div>
 
+              {/* Author's Message */}
               {book.authorMessage && (
-                <div className="rounded-lg bg-amber-50 p-4 border-l-4 border-amber-400 shadow-sm">
-                  <h3 className="mb-2 text-sm font-semibold text-amber-800">Author's Message</h3>
-                  <p className="text-sm italic text-amber-700">{book.authorMessage}</p>
+                <div className="rounded-lg bg-muted p-4 border-l-4 border-primary shadow-sm">
+                  <h3 className="mb-2 text-sm font-semibold text-foreground">Author's Message</h3>
+                  <p className="text-sm italic text-muted-foreground">{book.authorMessage}</p>
                 </div>
               )}
 
-              <div className="bg-gradient-to-r from-amber-50 to-white rounded-lg p-4 shadow-sm">
+              <div className="bg-gradient-to-r from-muted to-background rounded-lg p-4 shadow-sm">
                 <BookFormatSelector formats={book.formats} />
               </div>
 
               <div className="flex flex-col gap-4 sm:flex-row">
-                <Button size="lg" className="flex-1 bg-amber-500 hover:bg-amber-600">
+                <Button size="lg" className="flex-1 bg-primary hover:bg-primary/90">
                   Add to Library
                 </Button>
                 <Button variant="outline" size="lg">
@@ -89,69 +101,46 @@ export default async function BookPage({ params }: BookPageProps) {
                 </Button>
               </div>
             </div>
-                  </div>
-                  </div>
-
-        <Separator className="my-8" />
-
-        {/* Book Details */}
-        <div className="grid gap-8 md:grid-cols-2">
-          <div>
-            <h2 className="mb-4 text-2xl font-bold">Book Details</h2>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="font-medium">ISBN:</span>
-                <span>{book.details.isbn}</span>
-                  </div>
-              <div className="flex justify-between">
-                <span className="font-medium">Publisher:</span>
-                <span>{book.details.publisher}</span>
-                  </div>
-              <div className="flex justify-between">
-                <span className="font-medium">Publication Date:</span>
-                <span>{book.details.publicationDate}</span>
-                  </div>
-              <div className="flex justify-between">
-                <span className="font-medium">Pages:</span>
-                <span>{book.details.pages}</span>
-                  </div>
-              <div className="flex justify-between">
-                <span className="font-medium">Language:</span>
-                <span>{book.details.language}</span>
-                </div>
-              <div className="flex justify-between">
-                <span className="font-medium">Age Range:</span>
-                <span>{book.details.age}</span>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <h2 className="mb-4 text-2xl font-bold">Editorial Reviews</h2>
-            <div className="space-y-4">
-              {book.editorialReviews.map((review, index) => (
-                <div key={index} className="rounded-lg bg-gray-50 p-4">
-                  <p className="text-sm text-gray-700">{review}</p>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
 
         <Separator className="my-8" />
 
-        {/* Customer Reviews */}
-          <BookReviews
-            editorialReviews={book.editorialReviews}
-            customerReviews={book.customerReviews}
-            averageRating={book.rating}
-            reviewCount={book.reviewCount}
-          />
+        {/* Book Details */}
+        <div className="bg-gradient-to-r from-muted to-background rounded-lg p-4 shadow-sm">
+          <h3 className="text-lg font-semibold mb-2">Book Details</h3>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span className="font-medium">Publisher:</span> {book.details.publisher}
+            </div>
+            <div>
+              <span className="font-medium">Publication Date:</span> {book.details.publicationDate}
+            </div>
+            <div>
+              <span className="font-medium">Pages:</span> {book.details.pages}
+            </div>
+            <div>
+              <span className="font-medium">Language:</span> {book.details.language}
+            </div>
+          </div>
+        </div>
 
-        <Separator className="my-8" />
+        {/* Reviews */}
+        <BookReviews 
+          reviews={book.customerReviews}
+          averageRating={book.rating}
+          totalReviews={book.reviewCount}
+          editorialReview={book.editorialReviews[0]}
+        />
 
         {/* Related Books */}
-        <RelatedBooks title="You May Also Like" books={book.relatedBooks} />
+        <RelatedBooks 
+          title="You May Also Like" 
+          books={book.relatedBooks.map(book => ({
+            ...book,
+            price: 24.99 // Default price since it's not in the data
+          }))}
+        />
       </div>
     </AppShell>
   )

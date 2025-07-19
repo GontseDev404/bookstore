@@ -5,7 +5,7 @@ export function Footer() {
   return (
     <footer className="border-t bg-white">
       <div className="container mx-auto px-4 py-8">
-        <div className="grid gap-8 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           <div>
             <Link href="/" className="flex items-center gap-2">
                       <Image src="/images/2books-logo.png" alt="BookHaven Logo" width={40} height={40} className="h-10 w-auto" />
@@ -17,16 +17,16 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="mb-4 text-sm font-semibold">Shop</h3>
-            <ul className="grid gap-2">
+            <h3 className="text-sm font-semibold">Shop</h3>
+            <ul className="mt-4 space-y-2">
               <li>
                 <Link href="/books" className="text-sm text-muted-foreground hover:text-foreground">
-                  Books
+                  All Books
                 </Link>
               </li>
               <li>
                 <Link href="/bestsellers" className="text-sm text-muted-foreground hover:text-foreground">
-              Staff Favorites
+                  Bestsellers
                 </Link>
               </li>
               <li>

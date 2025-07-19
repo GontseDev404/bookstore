@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { BookRating } from "@/components/book/book-rating"
 import { CategoryIcon } from "@/components/category-icon"
 import { Input } from "@/components/ui/input"
+import { NewsletterSignup } from "@/components/newsletter-signup"
 
 export default function HomePage() {
   // Staff Favorites data
@@ -197,661 +198,458 @@ const staffFavorites = [
       title: "The Third Reich of Dreams",
       author: "Charlotte Beradt",
       coverImage: "/images/third-reich-of-dreams-cover.webp",
-      rating: 4.7,
-      reviewCount: 33,
-    },
-    {
-      id: "light-eaters",
-      title: "The Light Eaters",
-      author: "Zoë Schlanger",
-      coverImage:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/lf%20%282%29-v051b9Zgu5IcXd5HFkoW3qb8XfjGQx.webp",
       rating: 4.5,
-      reviewCount: 28,
-    },
-    {
-      id: "little-history-world",
-      title: "A Little History of the World",
-      author: "E.H. Gombrich",
-      coverImage:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/lf%20%285%29-8LCDNlcynYsrILU0qk76tsvpFQc1FG.webp",
-      rating: 4.8,
-      reviewCount: 36,
-    },
-    {
-      id: "raw-dog",
-      title: "Raw Dog: The Naked Truth About Hot Dogs",
-      author: "Jamie Loftus",
-      coverImage:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/lf%20%283%29-HYAKRZXyJYP2qTY3KbaXS8YEpM8Jjt.webp",
-      rating: 4.3,
-      reviewCount: 31,
-    },
-  ]
-
-  // Nature books data
-  const natureBooks = [
-    {
-      id: "is-a-river-alive",
-      title: "Is A River Alive?",
-      author: "Robert Macfarlane",
-      coverImage:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/lf%20%288%29-sOi7nTG3VYfHXJVil0Xtsy9T1nDXmt.webp",
-      rating: 4.7,
-      reviewCount: 34,
-    },
-    {
-      id: "left-for-dead",
-      title: "Left for Dead",
-      author: "Eric Jay Dolin",
-      coverImage:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/lf%20%284%29-RpY7nu3VAiaplXhjpN0A8LtwbazMMf.webp",
-      rating: 4.6,
-      reviewCount: 29,
-    },
-    {
-      id: "james",
-      title: "James",
-      author: "Percival Everett",
-      coverImage: "/images/james-cover.webp",
-      rating: 4.9,
-      reviewCount: 42,
-    },
-    {
-      id: "native-nations",
-      title: "Native Nations",
-      author: "Kathleen DuVal",
-      coverImage: "/images/native-nations-cover.webp",
-      rating: 4.8,
-      reviewCount: 36,
-    },
-    {
-      id: "shield-of-sparrows",
-      title: "Shield of Sparrows",
-      author: "Devney Perry",
-      coverImage: "/images/shield-of-sparrows-cover.webp",
-      rating: 4.7,
-      reviewCount: 28,
-    },
-    {
-      id: "original-sin",
-      title: "Original Sin",
-      author: "Jake Tapper and Alex Thompson",
-      coverImage: "/images/silver-feet-cover.png",
-      rating: 4.5,
-      reviewCount: 31,
-    },
-  ]
-
-  // Categories
-  const categories = [
-    { id: "mystery", name: "Mystery & Thriller", icon: "magnifying-glass" },
-    { id: "scifi", name: "Sci-Fi & Fantasy", icon: "rocket" },
-    { id: "romance", name: "Romance", icon: "heart" },
-    { id: "historical", name: "Historical Fiction", icon: "scroll" },
-    { id: "history", name: "History", icon: "landmark" },
-    { id: "biography", name: "Biography & Memoir", icon: "user" },
-    { id: "cookbooks", name: "Cookbooks", icon: "utensils" },
-    { id: "teens", name: "Teens & YA", icon: "sparkles" },
-    { id: "kids", name: "Kids", icon: "teddy-bear" },
-  ]
-
-  // Add these new data arrays after the existing data arrays (after the categories array)
-
-  // Staff Picks data
-  const staffPicks = [
-    {
-      id: "all-fours",
-      title: "All Fours",
-      author: "Miranda July",
-      coverImage: "/images/all-fours-cover.webp",
-      rating: 4.7,
-      reviewCount: 32,
-      staffName: "Emma",
-      staffComment: "A brilliant, bizarre, and deeply moving novel that will stay with you.",
-    },
-    {
-      id: "murderbot-diaries",
-      title: "The Murderbot Diaries",
-      author: "Martha Wells",
-      coverImage: "/images/murderbot-diaries-cover.webp",
-      rating: 4.9,
-      reviewCount: 48,
-      staffName: "Alex",
-      staffComment: "The most relatable AI protagonist you'll ever meet. Funny and thought-provoking.",
+      reviewCount: 23,
     },
     {
       id: "we-can-do-hard-things",
       title: "We Can Do Hard Things",
       author: "Glennon Doyle",
       coverImage: "/images/we-can-do-hard-things-cover.webp",
-      rating: 4.6,
-      reviewCount: 29,
-      staffName: "Sarah",
-      staffComment: "Life-changing wisdom that feels like talking with your wisest friend.",
+      rating: 4.7,
+      reviewCount: 2341,
     },
     {
-      id: "big-dumb-eyes",
-      title: "Big Dumb Eyes",
-      author: "Nate Bargatze",
-      coverImage: "/images/big-dumb-eyes-cover.webp",
-      rating: 4.5,
-      reviewCount: 32,
-      staffName: "Michael",
-      staffComment: "Laugh-out-loud funny from start to finish. Bargatze's best work yet.",
-    },
-  ]
-
-  // Coming Soon data
-  const comingSoon = [
-    {
-      id: "the-last-devil-to-die",
-      title: "The Last Devil to Die",
-      author: "Richard Osman",
-      coverImage: "/images/third-reich-of-dreams-cover.webp",
-      releaseDate: "June 15, 2025",
+      id: "shield-of-sparrows",
+      title: "Shield of Sparrows",
+      author: "Sarah Crossan",
+      coverImage: "/images/shield-of-sparrows-cover.webp",
+      rating: 4.4,
+      reviewCount: 18,
     },
     {
-      id: "the-secret-garden",
-      title: "The Secret Garden: Illustrated Edition",
-      author: "Frances Hodgson Burnett",
+      id: "all-fours",
+      title: "All Fours",
+      author: "Miranda July",
       coverImage: "/images/all-fours-cover.webp",
-      releaseDate: "June 22, 2025",
-    },
-    {
-      id: "the-midnight-library-sequel",
-      title: "Beyond the Midnight Library",
-      author: "Matt Haig",
-      coverImage: "/images/marble-hall-murders-cover.webp",
-      releaseDate: "July 1, 2025",
-    },
-    {
-      id: "the-silent-patient-returns",
-      title: "The Silent Patient Returns",
-      author: "Alex Michaelides",
-      coverImage: "/images/illustrated-meditations-cover.webp",
-      releaseDate: "July 8, 2025",
+      rating: 4.6,
+      reviewCount: 25,
     },
   ]
 
-  // Book Club Picks data
-  const bookClubPicks = [
+  // Nature books data
+  const natureBooks = [
+    {
+      id: "native-nations",
+      title: "Native Nations",
+      author: "Kathleen DuVal",
+      coverImage: "/images/native-nations-cover.webp",
+      rating: 4.5,
+      reviewCount: 445,
+    },
+    {
+      id: "the-emperor-of-gladness",
+      title: "The Emperor of Gladness",
+      author: "Robert McGill",
+      coverImage: "/images/the-emperor-of-gladness-cover.webp",
+      rating: 4.4,
+      reviewCount: 678,
+    },
+    {
+      id: "the-tenant",
+      title: "The Tenant",
+      author: "Katy Loutzenhiser",
+      coverImage: "/images/the-tenant-cover.webp",
+      rating: 4.3,
+      reviewCount: 523,
+    },
+    {
+      id: "the-monkey-blanket",
+      title: "The Monkey Blanket",
+      author: "Sarah Crossan",
+      coverImage: "/images/the-monkey-blanket-cover.png",
+      rating: 4.6,
+      reviewCount: 789,
+    },
+    {
+      id: "we-can-do-hard-things",
+      title: "We Can Do Hard Things",
+      author: "Glennon Doyle",
+      coverImage: "/images/we-can-do-hard-things-cover.webp",
+      rating: 4.7,
+      reviewCount: 2341,
+    },
     {
       id: "remarkably-bright-creatures",
       title: "Remarkably Bright Creatures",
       author: "Shelby Van Pelt",
       coverImage: "/images/remarkably-bright-creatures-cover.webp",
       rating: 4.6,
-      reviewCount: 35,
-      discussion: "June 2025",
+      reviewCount: 892,
+    },
+  ]
+
+  // Coming soon books data
+  const comingSoonBooks = [
+    {
+      id: "the-garden-whispers",
+      title: "The Garden Whispers",
+      author: "Nana Ndlovana-Mthimkhulu",
+      coverImage: "/images/shield-of-sparrows-cover.webp",
+      rating: 0,
+      reviewCount: 0,
     },
     {
-      id: "the-tenant",
-      title: "The Tenant",
-      author: "Freida McFadden",
-      coverImage: "/images/the-tenant-cover.webp",
-      rating: 4.8,
-      reviewCount: 39,
-      discussion: "July 2025",
+      id: "the-river-sings",
+      title: "The River Sings",
+      author: "Nana Ndlovana-Mthimkhulu",
+      coverImage: "/images/all-fours-cover.webp",
+      rating: 0,
+      reviewCount: 0,
     },
     {
-      id: "james",
-      title: "James",
-      author: "Percival Everett",
-      coverImage: "/images/james-cover.webp",
+      id: "the-mountain-calls",
+      title: "The Mountain Calls",
+      author: "Nana Ndlovana-Mthimkhulu",
+      coverImage: "/images/we-can-do-hard-things-cover.webp",
+      rating: 0,
+      reviewCount: 0,
+    },
+  ]
+
+  // Book club books data
+  const bookClubBooks = [
+    {
+      id: "the-garden-whispers",
+      title: "The Garden Whispers",
+      author: "Nana Ndlovana-Mthimkhulu",
+      coverImage: "/images/shield-of-sparrows-cover.webp",
       rating: 4.7,
-      reviewCount: 27,
-      discussion: "August 2025",
+      reviewCount: 28,
     },
     {
-      id: "fearless",
-      title: "Fearless",
-      author: "Lauren Roberts",
-      coverImage: "/images/fearless-cover.webp",
-      rating: 4.9,
-      reviewCount: 41,
-      discussion: "September 2025",
+      id: "the-river-sings",
+      title: "The River Sings",
+      author: "Nana Ndlovana-Mthimkhulu",
+      coverImage: "/images/all-fours-cover.webp",
+      rating: 4.6,
+      reviewCount: 31,
     },
+    {
+      id: "the-mountain-calls",
+      title: "The Mountain Calls",
+      author: "Nana Ndlovana-Mthimkhulu",
+      coverImage: "/images/we-can-do-hard-things-cover.webp",
+      rating: 4.8,
+      reviewCount: 42,
+    },
+  ]
+
+  // Categories data
+  const categories = [
+    { name: "Fiction", icon: "book", count: 1250 },
+    { name: "Non-Fiction", icon: "graduation-cap", count: 890 },
+    { name: "Children's", icon: "baby", count: 450 },
+    { name: "Audiobooks", icon: "headphones", count: 320 },
+    { name: "Science Fiction", icon: "rocket", count: 280 },
+    { name: "Mystery", icon: "search", count: 340 },
   ]
 
   return (
     <AppShell>
-      {/* Announcement Bar */}
-      <div className="bg-slate-700 py-3 text-center text-white">
-        <div className="container mx-auto flex items-center justify-between px-4">
-          <button className="text-white">
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <p className="text-sm font-medium">PICK UP IN STORE: READY IN TWO HOURS</p>
-          <button className="text-white">
-            <ChevronRight className="h-5 w-5" />
-          </button>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <main className="flex-1">
-        {/* Hero Banner - Mark Twain */}
-        <section className="relative">
-          <div className="relative w-full">
-            <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/32256_SkinnyHero_MarkTwain_05_13_25.jpg-ieGy9Wrk3iHupSOYgAaVRF0HwO4j9R.jpeg"
-              alt="Mark Twain by Ron Chernow"
-              width={1200}
-              height={300}
-              className="w-full"
-              priority
-            />
-          </div>
-        </section>
-
-        {/* Staff Favorites Section */}
-        <section className="container mx-auto px-4 py-8">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-2xl font-bold">Staff Favorites</h2>
-            <Link href="/bestsellers" className="text-sm font-medium text-amber-700 hover:underline">
-              See All
-            </Link>
-          </div>
-          <div className="relative">
-            <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-              {staffFavorites.map((book) => (
-                <Link key={book.id} href={book.link} className="group">
-                  <div className="overflow-hidden rounded-md border bg-muted">
-                    <Image
-                      src={book.coverImage || "/placeholder.svg"}
-                      alt={book.title}
-                      width={200}
-                      height={300}
-                      className="h-auto w-full object-cover transition-all group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="mt-2">
-                    <h3 className="line-clamp-1 font-medium group-hover:text-amber-700">{book.title}</h3>
-                    <p className="text-sm text-muted-foreground">by {book.author}</p>
-                    <BookRating rating={book.rating} reviewCount={book.reviewCount} />
-                  </div>
-                </Link>
-              ))}
-            </div>
-            <div className="absolute -left-4 top-1/2 -translate-y-1/2">
-              <Button variant="outline" size="icon" className="h-8 w-8 rounded-full bg-white shadow-md">
-                <ChevronLeft className="h-4 w-4" />
-                <span className="sr-only">Previous</span>
-              </Button>
-            </div>
-            <div className="absolute -right-4 top-1/2 -translate-y-1/2">
-              <Button variant="outline" size="icon" className="h-8 w-8 rounded-full bg-white shadow-md">
-                <ChevronRight className="h-4 w-4" />
-                <span className="sr-only">Next</span>
-              </Button>
-            </div>
-          </div>
-        </section>
-
-        {/* Our Best Fiction Books Section */}
-        <section className="container mx-auto px-4 py-8">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-2xl font-bold italic">Our Best Fiction Books</h2>
-            <Link href="/fiction" className="text-sm font-medium text-amber-700 hover:underline">
-              See All
-            </Link>
-          </div>
-          <div className="relative">
-            <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-              {fictionBooks.map((book) => (
-                <Link key={book.id} href="/books/silver-feet-and-her-wonder" className="group">
-                  <div className="overflow-hidden rounded-md border bg-muted">
-                    <Image
-                      src={book.coverImage || "/placeholder.svg"}
-                      alt={book.title}
-                      width={200}
-                      height={300}
-                      className="h-auto w-full object-cover transition-all group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="mt-2">
-                    <h3 className="line-clamp-1 font-medium group-hover:text-amber-700">{book.title}</h3>
-                    <p className="text-sm text-muted-foreground">by {book.author}</p>
-                    <BookRating rating={book.rating} reviewCount={book.reviewCount} />
-                  </div>
-                </Link>
-              ))}
-            </div>
-            <div className="absolute -left-4 top-1/2 -translate-y-1/2">
-              <Button variant="outline" size="icon" className="h-8 w-8 rounded-full bg-white shadow-md">
-                <ChevronLeft className="h-4 w-4" />
-                <span className="sr-only">Previous</span>
-              </Button>
-            </div>
-            <div className="absolute -right-4 top-1/2 -translate-y-1/2">
-              <Button variant="outline" size="icon" className="h-8 w-8 rounded-full bg-white shadow-md">
-                <ChevronRight className="h-4 w-4" />
-                <span className="sr-only">Next</span>
-              </Button>
-            </div>
-          </div>
-        </section>
-
-        {/* Our Best Audiobooks Section */}
-        <section className="container mx-auto px-4 py-8">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-2xl font-bold italic">Our Best Audiobooks</h2>
-            <Link href="/audiobooks" className="text-sm font-medium text-amber-700 hover:underline">
-              See All
-            </Link>
-          </div>
-          <div className="relative">
-            <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-              {audiobooks.map((book) => (
-                <Link key={book.id} href="/books/silver-feet-and-her-wonder" className="group">
-                  <div className="overflow-hidden rounded-md border bg-muted">
-                    <Image
-                      src={book.coverImage || "/placeholder.svg"}
-                      alt={book.title}
-                      width={200}
-                      height={300}
-                      className="h-auto w-full object-cover transition-all group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="mt-2">
-                    <h3 className="line-clamp-1 font-medium group-hover:text-amber-700">{book.title}</h3>
-                    <p className="text-sm text-muted-foreground">by {book.author}</p>
-                    <BookRating rating={book.rating} reviewCount={book.reviewCount} />
-                  </div>
-                </Link>
-              ))}
-            </div>
-            <div className="absolute -left-4 top-1/2 -translate-y-1/2">
-              <Button variant="outline" size="icon" className="h-8 w-8 rounded-full bg-white shadow-md">
-                <ChevronLeft className="h-4 w-4" />
-                <span className="sr-only">Previous</span>
-              </Button>
-            </div>
-            <div className="absolute -right-4 top-1/2 -translate-y-1/2">
-              <Button variant="outline" size="icon" className="h-8 w-8 rounded-full bg-white shadow-md">
-                <ChevronRight className="h-4 w-4" />
-                <span className="sr-only">Next</span>
-              </Button>
-            </div>
-          </div>
-        </section>
-
-        {/* Promotional Banners */}
-        <section className="container mx-auto mb-8 px-4">
-          <div className="grid gap-6 md:grid-cols-3">
-            <div className="overflow-hidden rounded-lg">
-              <Image
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-05-16%20at%2014.58.53.png-Ynagw37YjBNRjuK8TXEoQhUpM4rqwD.jpeg"
-                alt="Promotional Banners"
-                width={1200}
-                height={300}
-                className="w-full"
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* Our Best Nonfiction Books Section */}
-        <section className="container mx-auto px-4 py-8">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-2xl font-bold italic">Our Best Nonfiction Books</h2>
-            <Link href="/nonfiction" className="text-sm font-medium text-amber-700 hover:underline">
-              See All
-            </Link>
-          </div>
-          <div className="relative">
-            <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-              {nonfictionBooks.map((book) => (
-                <Link key={book.id} href="/books/silver-feet-and-her-wonder" className="group">
-                  <div className="overflow-hidden rounded-md border bg-muted">
-                    <Image
-                      src={book.coverImage || "/placeholder.svg"}
-                      alt={book.title}
-                      width={200}
-                      height={300}
-                      className="h-auto w-full object-cover transition-all group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="mt-2">
-                    <h3 className="line-clamp-1 font-medium group-hover:text-amber-700">{book.title}</h3>
-                    <p className="text-sm text-muted-foreground">by {book.author}</p>
-                    <BookRating rating={book.rating} reviewCount={book.reviewCount} />
-                  </div>
-                </Link>
-              ))}
-            </div>
-            <div className="absolute -left-4 top-1/2 -translate-y-1/2">
-              <Button variant="outline" size="icon" className="h-8 w-8 rounded-full bg-white shadow-md">
-                <ChevronLeft className="h-4 w-4" />
-                <span className="sr-only">Previous</span>
-              </Button>
-            </div>
-            <div className="absolute -right-4 top-1/2 -translate-y-1/2">
-              <Button variant="outline" size="icon" className="h-8 w-8 rounded-full bg-white shadow-md">
-                <ChevronRight className="h-4 w-4" />
-                <span className="sr-only">Next</span>
-              </Button>
-            </div>
-          </div>
-        </section>
-
-        {/* Nature & Adventure Books Section */}
-        <section className="container mx-auto px-4 py-8">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-2xl font-bold italic">Nature & Adventure Books</h2>
-            <Link href="/nature" className="text-sm font-medium text-amber-700 hover:underline">
-              See All
-            </Link>
-          </div>
-          <div className="relative">
-            <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-              {natureBooks.map((book) => (
-                <Link key={book.id} href="/books/silver-feet-and-her-wonder" className="group">
-                  <div className="overflow-hidden rounded-md border bg-muted">
-                    <Image
-                      src={book.coverImage || "/placeholder.svg"}
-                      alt={book.title}
-                      width={200}
-                      height={300}
-                      className="h-auto w-full object-cover transition-all group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="mt-2">
-                    <h3 className="line-clamp-1 font-medium group-hover:text-amber-700">{book.title}</h3>
-                    <p className="text-sm text-muted-foreground">by {book.author}</p>
-                    <BookRating rating={book.rating} reviewCount={book.reviewCount} />
-                  </div>
-                </Link>
-              ))}
-            </div>
-            <div className="absolute -left-4 top-1/2 -translate-y-1/2">
-              <Button variant="outline" size="icon" className="h-8 w-8 rounded-full bg-white shadow-md">
-                <ChevronLeft className="h-4 w-4" />
-                <span className="sr-only">Previous</span>
-              </Button>
-            </div>
-            <div className="absolute -right-4 top-1/2 -translate-y-1/2">
-              <Button variant="outline" size="icon" className="h-8 w-8 rounded-full bg-white shadow-md">
-                <ChevronRight className="h-4 w-4" />
-                <span className="sr-only">Next</span>
-              </Button>
-            </div>
-          </div>
-        </section>
-
-        {/* Categories Section */}
-        <section className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-3 gap-4 sm:grid-cols-5 md:grid-cols-9">
-            {categories.map((category) => (
-              <Link
-                key={category.id}
-                href={`/categories/${category.id}`}
-                className="flex flex-col items-center gap-2 text-center"
-              >
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-50">
-                  <CategoryIcon name={category.icon} className="h-8 w-8 text-amber-700" />
-                </div>
-                <span className="text-xs font-medium sm:text-sm">{category.name}</span>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        {/* Staff Picks Section */}
-        <section className="container mx-auto px-4 py-8 bg-amber-50 rounded-lg my-8">
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-amber-800">Staff Picks</h2>
-              <p className="text-sm text-amber-700">Recommended by our bookworms</p>
-            </div>
-            <Link href="/staff-picks" className="text-sm font-medium text-amber-700 hover:underline">
-              See All
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {staffPicks.map((book) => (
-              <div key={book.id} className="rounded-lg border bg-white p-4 shadow-sm transition-all hover:shadow-md">
-                <div className="flex gap-4">
-                  <div className="w-1/3">
-                    <div className="overflow-hidden rounded-md border bg-muted">
-                      <Image
-                        src={book.coverImage || "/placeholder.svg"}
-                        alt={book.title}
-                        width={120}
-                        height={180}
-                        className="h-auto w-full object-cover"
-                      />
-                    </div>
-                  </div>
-                  <div className="w-2/3 space-y-2">
-                    <h3 className="font-medium">{book.title}</h3>
-                    <p className="text-sm text-muted-foreground">by {book.author}</p>
-                    <BookRating rating={book.rating} reviewCount={book.reviewCount} />
-                    <div className="mt-2">
-                      <p className="text-xs font-semibold text-amber-700">Picked by {book.staffName}</p>
-                      <p className="text-xs italic">{book.staffComment}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Coming Soon Section */}
-        <section className="container mx-auto px-4 py-8">
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold italic">Coming Soon</h2>
-              <p className="text-sm text-muted-foreground">Pre-order now</p>
-            </div>
-            <Link href="/coming-soon" className="text-sm font-medium text-amber-700 hover:underline">
-              See All
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 md:grid-cols-4">
-            {comingSoon.map((book) => (
-              <div key={book.id} className="group space-y-2">
-                <div className="overflow-hidden rounded-md border bg-muted">
-                  <Image
-                    src={book.coverImage || "/placeholder.svg"}
-                    alt={book.title}
-                    width={200}
-                    height={300}
-                    className="h-auto w-full object-cover transition-all group-hover:scale-105"
-                  />
-                  <div className="bg-amber-500 py-1 px-2 text-center text-xs font-medium text-white">
-                    Coming {book.releaseDate}
-                  </div>
-                </div>
-                <div>
-                  <h3 className="line-clamp-1 font-medium group-hover:text-amber-700">{book.title}</h3>
-                  <p className="text-sm text-muted-foreground">by {book.author}</p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="mt-2 w-full border-amber-300 text-amber-700 hover:bg-amber-50"
-                  >
-                    Pre-order Now
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Book Club Picks Section */}
-        <section className="container mx-auto px-4 py-8 bg-gradient-to-r from-slate-100 to-white rounded-lg my-8">
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-slate-800">BookHaven Club Picks</h2>
-              <p className="text-sm text-slate-600">Join our monthly book discussions</p>
-            </div>
-            <Link href="/book-club" className="text-sm font-medium text-amber-700 hover:underline">
-              Join Book Club
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {bookClubPicks.map((book) => (
-              <div key={book.id} className="rounded-lg border bg-white p-4 shadow-sm transition-all hover:shadow-md">
-                <div className="mb-3 flex justify-center">
-                  <div className="overflow-hidden rounded-md border bg-muted w-2/3">
-                    <Image
-                      src={book.coverImage || "/placeholder.svg"}
-                      alt={book.title}
-                      width={150}
-                      height={225}
-                      className="h-auto w-full object-cover"
-                    />
-                  </div>
-                </div>
-                <div className="text-center">
-                  <h3 className="font-medium">{book.title}</h3>
-                  <p className="text-sm text-muted-foreground">by {book.author}</p>
-                  <div className="mt-2 flex justify-center">
-                    <BookRating rating={book.rating} reviewCount={book.reviewCount} />
-                  </div>
-                  <div className="mt-3 inline-block rounded-full bg-slate-200 px-3 py-1 text-xs font-medium">
-                    Discussion: {book.discussion}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="mt-6 rounded-lg bg-slate-800 p-6 text-center text-white">
-            <h3 className="text-xl font-bold">Join Our Book Club</h3>
-            <p className="mt-2 text-slate-300">
-              Meet fellow readers, enjoy exclusive discounts, and participate in author Q&As
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-r from-primary to-primary/80 text-primary-foreground">
+        <div className="container mx-auto px-4 py-16">
+          <div className="max-w-3xl">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+              Discover Your Next
+              <span className="block text-primary-foreground/90">Great Read</span>
+            </h1>
+            <p className="text-xl mb-8 text-primary-foreground/90">
+              Explore thousands of books across all genres. From bestsellers to hidden gems, 
+              find your perfect story at BookHaven.
             </p>
-            <Button className="mt-4 bg-amber-500 hover:bg-amber-600">Learn More</Button>
-          </div>
-        </section>
-
-        {/* Newsletter Section */}
-        <section className="container mx-auto px-4 py-12 my-8">
-          <div className="rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 p-8 text-white">
-            <div className="grid gap-6 md:grid-cols-2">
-              <div>
-                <h2 className="text-3xl font-bold">Stay Updated</h2>
-                <p className="mt-2">
-                  Subscribe to our newsletter for exclusive offers, author interviews, and new release notifications.
-                </p>
-              </div>
-              <div className="flex items-center">
-                <div className="flex w-full max-w-md flex-col gap-2 sm:flex-row">
-                  <Input
-                    type="email"
-                    placeholder="Enter your email"
-                    className="bg-white text-black placeholder:text-gray-500"
-                  />
-                  <Button className="bg-slate-800 hover:bg-slate-900">Subscribe</Button>
-                </div>
-              </div>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Input 
+                placeholder="Search by title, author, or ISBN..."
+                className="flex-1 text-foreground placeholder:text-muted-foreground"
+              />
+              <Button size="lg" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90">
+                Search Books
+              </Button>
             </div>
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
+
+      {/* Staff Favorites Section */}
+      <section className="container mx-auto px-4 py-12">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-2xl font-bold">Staff Favorites</h2>
+            <p className="text-muted-foreground">Curated picks from our bookworms</p>
+          </div>
+          <Link href="/bestsellers" className="text-sm font-medium text-primary hover:underline">
+            View All →
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          {staffFavorites.map((book) => (
+            <Link key={book.id} href={book.link} className="group">
+              <div className="aspect-[3/4] relative overflow-hidden rounded-lg mb-3">
+                <Image
+                  src={book.coverImage}
+                  alt={book.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-200"
+                />
+              </div>
+              <h3 className="line-clamp-1 font-medium group-hover:text-primary">{book.title}</h3>
+              <p className="text-sm text-muted-foreground">by {book.author}</p>
+              <BookRating rating={book.rating} reviewCount={book.reviewCount} size="sm" />
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Fiction Section */}
+      <section className="container mx-auto px-4 py-12">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-2xl font-bold">Fiction</h2>
+            <p className="text-muted-foreground">Stories that transport you to new worlds</p>
+          </div>
+          <Link href="/fiction" className="text-sm font-medium text-primary hover:underline">
+            View All →
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          {fictionBooks.map((book) => (
+            <Link key={book.id} href={`/books/${book.id}`} className="group">
+              <div className="aspect-[3/4] relative overflow-hidden rounded-lg mb-3">
+                <Image
+                  src={book.coverImage}
+                  alt={book.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-200"
+                />
+              </div>
+              <h3 className="line-clamp-1 font-medium group-hover:text-primary">{book.title}</h3>
+              <p className="text-sm text-muted-foreground">by {book.author}</p>
+              <BookRating rating={book.rating} reviewCount={book.reviewCount} size="sm" />
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Audiobooks Section */}
+      <section className="container mx-auto px-4 py-12">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-2xl font-bold">Audiobooks</h2>
+            <p className="text-muted-foreground">Listen to your favorite stories</p>
+          </div>
+          <Link href="/audiobooks" className="text-sm font-medium text-primary hover:underline">
+            View All →
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          {audiobooks.map((book) => (
+            <Link key={book.id} href={`/books/${book.id}`} className="group">
+              <div className="aspect-[3/4] relative overflow-hidden rounded-lg mb-3">
+                <Image
+                  src={book.coverImage}
+                  alt={book.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-200"
+                />
+              </div>
+              <h3 className="line-clamp-1 font-medium group-hover:text-primary">{book.title}</h3>
+              <p className="text-sm text-muted-foreground">by {book.author}</p>
+              <BookRating rating={book.rating} reviewCount={book.reviewCount} size="sm" />
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Nonfiction Section */}
+      <section className="container mx-auto px-4 py-12">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-2xl font-bold">Nonfiction</h2>
+            <p className="text-muted-foreground">Expand your knowledge and understanding</p>
+          </div>
+          <Link href="/nonfiction" className="text-sm font-medium text-primary hover:underline">
+            View All →
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          {nonfictionBooks.map((book) => (
+            <Link key={book.id} href={`/books/${book.id}`} className="group">
+              <div className="aspect-[3/4] relative overflow-hidden rounded-lg mb-3">
+                <Image
+                  src={book.coverImage}
+                  alt={book.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-200"
+                />
+              </div>
+              <h3 className="line-clamp-1 font-medium group-hover:text-primary">{book.title}</h3>
+              <p className="text-sm text-muted-foreground">by {book.author}</p>
+              <BookRating rating={book.rating} reviewCount={book.reviewCount} size="sm" />
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Nature Section */}
+      <section className="container mx-auto px-4 py-12">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-2xl font-bold">Nature & Environment</h2>
+            <p className="text-muted-foreground">Connect with the natural world</p>
+          </div>
+          <Link href="/nature" className="text-sm font-medium text-primary hover:underline">
+            View All →
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          {natureBooks.map((book) => (
+            <Link key={book.id} href={`/books/${book.id}`} className="group">
+              <div className="aspect-[3/4] relative overflow-hidden rounded-lg mb-3">
+                <Image
+                  src={book.coverImage}
+                  alt={book.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-200"
+                />
+              </div>
+              <h3 className="line-clamp-1 font-medium group-hover:text-primary">{book.title}</h3>
+              <p className="text-sm text-muted-foreground">by {book.author}</p>
+              <BookRating rating={book.rating} reviewCount={book.reviewCount} size="sm" />
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Categories Section */}
+      <section className="container mx-auto px-4 py-12">
+        <h2 className="text-2xl font-bold mb-8">Browse by Category</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          {categories.map((category) => (
+            <Link key={category.name} href={`/categories/${category.name.toLowerCase()}`} className="group">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                <CategoryIcon name={category.icon} className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="font-semibold mt-2">{category.name}</h3>
+              <p className="text-sm text-muted-foreground">{category.count} books</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Staff Picks Section */}
+      <section className="container mx-auto px-4 py-8 bg-muted rounded-lg my-8">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-2xl font-bold text-foreground">Staff Picks</h2>
+            <p className="text-muted-foreground">Recommended by our bookworms</p>
+          </div>
+          <Link href="/staff-picks" className="text-sm font-medium text-primary hover:underline">
+            View All →
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          {staffFavorites.slice(0, 6).map((book) => (
+            <Link key={book.id} href={book.link} className="group">
+              <div className="aspect-[3/4] relative overflow-hidden rounded-lg mb-3">
+                <Image
+                  src={book.coverImage}
+                  alt={book.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-200"
+                />
+              </div>
+              <h3 className="line-clamp-1 font-medium group-hover:text-primary">{book.title}</h3>
+              <p className="text-sm text-muted-foreground">by {book.author}</p>
+              <BookRating rating={book.rating} reviewCount={book.reviewCount} size="sm" />
+              <p className="text-xs font-semibold text-primary">Picked by {book.author}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Coming Soon Section */}
+      <section className="container mx-auto px-4 py-12">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-2xl font-bold">Coming Soon</h2>
+            <p className="text-muted-foreground">Pre-order these upcoming releases</p>
+          </div>
+          <Link href="/coming-soon" className="text-sm font-medium text-primary hover:underline">
+            View All →
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          {comingSoonBooks.map((book) => (
+            <Link key={book.id} href={`/books/${book.id}`} className="group">
+              <div className="aspect-[3/4] relative overflow-hidden rounded-lg mb-3">
+                <Image
+                  src={book.coverImage}
+                  alt={book.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-200"
+                />
+                <div className="bg-primary py-1 px-2 text-center text-xs font-medium text-primary-foreground absolute top-2 left-2">
+                  Pre-order
+                </div>
+              </div>
+              <h3 className="line-clamp-1 font-medium group-hover:text-primary">{book.title}</h3>
+              <p className="text-sm text-muted-foreground">by {book.author}</p>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="mt-2 w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+              >
+                Pre-order now
+              </Button>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Book Club Section */}
+      <section className="container mx-auto px-4 py-12">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-2xl font-bold">Book Club Picks</h2>
+            <p className="text-muted-foreground">Perfect for your next discussion</p>
+          </div>
+          <Link href="/book-club" className="text-sm font-medium text-primary hover:underline">
+            View All →
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          {bookClubBooks.map((book) => (
+            <Link key={book.id} href={`/books/${book.id}`} className="group">
+              <div className="aspect-[3/4] relative overflow-hidden rounded-lg mb-3">
+                <Image
+                  src={book.coverImage}
+                  alt={book.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-200"
+                />
+              </div>
+              <h3 className="line-clamp-1 font-medium group-hover:text-primary">{book.title}</h3>
+              <p className="text-sm text-muted-foreground">by {book.author}</p>
+              <BookRating rating={book.rating} reviewCount={book.reviewCount} size="sm" />
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <NewsletterSignup />
+
+      {/* CTA Section */}
+      <section className="container mx-auto px-4 py-12 text-center">
+        <h2 className="text-3xl font-bold mb-4">Ready to Start Reading?</h2>
+        <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
+          Join thousands of readers who discover their next favorite book at BookHaven. 
+          Start exploring our collection today.
+        </p>
+        <Button className="mt-4 bg-primary hover:bg-primary/90">Learn More</Button>
+      </section>
     </AppShell>
   )
 }

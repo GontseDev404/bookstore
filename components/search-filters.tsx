@@ -30,7 +30,7 @@ export interface SearchFilters {
 export function SearchFilters({ onFiltersChange, isOpen, onToggle }: SearchFiltersProps) {
   const [filters, setFilters] = useState<SearchFilters>({
     query: "",
-    category: "",
+    category: "all",
     priceRange: [0, 100],
     rating: 0,
     format: [],
@@ -48,7 +48,7 @@ export function SearchFilters({ onFiltersChange, isOpen, onToggle }: SearchFilte
   const clearFilters = () => {
     const clearedFilters: SearchFilters = {
       query: "",
-      category: "",
+      category: "all",
       priceRange: [0, 100] as [number, number],
       rating: 0,
       format: [],
@@ -93,7 +93,7 @@ export function SearchFilters({ onFiltersChange, isOpen, onToggle }: SearchFilte
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Categories</SelectItem>
+              <SelectItem value="all">All Categories</SelectItem>
               <SelectItem value="fiction">Fiction</SelectItem>
               <SelectItem value="nonfiction">Non-Fiction</SelectItem>
               <SelectItem value="children">Children's Books</SelectItem>

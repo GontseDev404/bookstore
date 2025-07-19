@@ -1,0 +1,157 @@
+/* Enhanced Sidebar Styles */
+
+/* Smooth transitions for all sidebar elements */
+.sidebar-item {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover effects for sidebar items */
+.sidebar-item:hover {
+  transform: translateX(4px);
+}
+
+/* Active state styling */
+.sidebar-item.active {
+  background: hsl(var(--accent));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon container styling */
+.sidebar-icon {
+  transition: all 0.2s ease;
+}
+
+.sidebar-item:hover .sidebar-icon {
+  transform: scale(1.1);
+}
+
+/* Badge animations */
+.sidebar-badge {
+  animation: badgePulse 2s infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Search input focus effects */
+.sidebar-search:focus {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+  border-color: hsl(var(--ring));
+}
+
+/* Collapsible sidebar animations */
+.sidebar-collapsible {
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Scrollbar styling for sidebar content */
+.sidebar-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 2px;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* Section header styling */
+.sidebar-section-header {
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar-section-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, hsl(var(--border)) 50%, transparent 100%);
+}
+
+/* Logo hover effect */
+.sidebar-logo:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+/* Close button hover effect */
+.sidebar-close:hover {
+  background: hsl(var(--destructive) / 0.1);
+  color: hsl(var(--destructive));
+}
+
+/* Mobile sidebar overlay effect */
+.sidebar-mobile-overlay {
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* Tooltip animations */
+.sidebar-tooltip {
+  animation: tooltipFade 0.2s ease-out;
+}
+
+@keyframes tooltipFade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading skeleton animation */
+.sidebar-skeleton {
+  animation: skeletonPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes skeletonPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .sidebar-desktop {
+    display: none;
+  }
+}
+
+@media (min-width: 1025px) {
+  .sidebar-mobile {
+    display: none;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .sidebar-item:hover {
+    background: hsl(var(--accent));
+  }
+  
+  .sidebar-item.active {
+    background: hsl(var(--accent));
+  }
+} 

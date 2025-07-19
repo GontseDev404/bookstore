@@ -7,9 +7,9 @@ import { useContext, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { SearchContext } from "@/components/search-context"
 import { WishlistCartContext } from "@/components/wishlist-cart-context"
+import { EnhancedSidebar } from "./enhanced-sidebar"
 export function Header() {
   const { searchQuery, setSearchQuery } = useContext(SearchContext)
   const { cart } = useContext(WishlistCartContext)
@@ -32,33 +32,7 @@ export function Header() {
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden">
-                  <Menu className="h-5 w-5" />
-                  <span className="sr-only">Toggle menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left">
-                <div className="grid gap-6 py-6">
-                  <Link href="/" className="flex items-center gap-2 font-semibold">
-                    Home
-                  </Link>
-                  <Link href="/books" className="flex items-center gap-2 font-semibold">
-                    Books
-                  </Link>
-                  <Link href="/bestsellers" className="flex items-center gap-2 font-semibold">
-          Staff Favorites
-                  </Link>
-                  <Link href="/new-releases" className="flex items-center gap-2 font-semibold">
-                    New Releases
-                  </Link>
-                  <Link href="/categories" className="flex items-center gap-2 font-semibold">
-                    Categories
-                  </Link>
-                </div>
-              </SheetContent>
-            </Sheet>
+            <EnhancedSidebar />
             <Link href="/" className="flex items-center gap-2">
                       <Image src="/images/2books-logo.png" alt="BookHaven Logo" width={40} height={40} className="h-10 w-auto" />
         <span className="hidden text-xl font-bold md:inline-block">BookHaven</span>
@@ -107,34 +81,22 @@ export function Header() {
           </div>
         </div>
 
-        <nav className="hidden md:mt-2 md:block">
-          <ul className="flex gap-6">
-            <li>
-              <Link href="/books" className="text-sm font-medium hover:text-primary">
-                Books
-              </Link>
-            </li>
-            <li>
-              <Link href="/bestsellers" className="text-sm font-medium hover:text-primary">
-              Staff Favorites
-              </Link>
-            </li>
-            <li>
-              <Link href="/new-releases" className="text-sm font-medium hover:text-primary">
-                New Releases
-              </Link>
-            </li>
-            <li>
-              <Link href="/categories" className="text-sm font-medium hover:text-primary">
-                Categories
-              </Link>
-            </li>
-            <li>
-              <Link href="/deals" className="text-sm font-medium hover:text-primary">
-                Deals
-              </Link>
-            </li>
-          </ul>
+        <nav className="hidden md:flex items-center space-x-8">
+          <Link href="/books" className="text-sm font-medium hover:text-primary">
+            All Books
+          </Link>
+          <Link href="/bestsellers" className="text-sm font-medium hover:text-primary">
+            Bestsellers
+          </Link>
+          <Link href="/new-releases" className="text-sm font-medium hover:text-primary">
+            New Releases
+          </Link>
+          <Link href="/categories" className="text-sm font-medium hover:text-primary">
+            Categories
+          </Link>
+          <Link href="/deals" className="text-sm font-medium hover:text-primary">
+            Deals
+          </Link>
         </nav>
       </div>
     </header>

@@ -5,9 +5,10 @@ import Link from "next/link"
 import { AppShell } from "@/components/layout/app-shell"
 import { BookRating } from "@/components/book/book-rating"
 import { Button } from "@/components/ui/button"
-import { Heart, ShoppingCart, Trash2 } from "lucide-react"
+import { Heart, ShoppingCart, Trash2, ArrowLeft, Home, BookOpen, Star } from "lucide-react"
 import { useContext, useEffect, useState } from "react"
 import { WishlistCartContext } from "@/components/wishlist-cart-context"
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 
 const allBooks = [
   {
@@ -99,9 +100,63 @@ export default function WishlistPage() {
   return (
     <AppShell>
       <div className="container mx-auto px-4 py-8">
+        {/* Breadcrumbs */}
+        <Breadcrumb className="mb-6">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/" className="flex items-center gap-1">
+                <Home className="h-4 w-4" />
+                Home
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>My Wishlist</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
+        {/* Header with Back Navigation */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Wishlist</h1>
-          <p className="text-gray-600">Books you've saved for later</p>
+          <div className="flex items-center gap-4 mb-4">
+            <Link href="/">
+              <Button variant="ghost" size="icon">
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">My Wishlist</h1>
+              <p className="text-gray-600">Books you've saved for later</p>
+            </div>
+          </div>
+          
+          {/* Quick Navigation */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            <Link href="/books">
+              <Button variant="outline" size="sm">
+                <BookOpen className="h-4 w-4 mr-2" />
+                Browse Books
+              </Button>
+            </Link>
+            <Link href="/popular">
+              <Button variant="outline" size="sm">
+                <Star className="h-4 w-4 mr-2" />
+                Popular Books
+              </Button>
+            </Link>
+            <Link href="/new-releases">
+              <Button variant="outline" size="sm">
+                <Heart className="h-4 w-4 mr-2" />
+                New Releases
+              </Button>
+            </Link>
+            <Link href="/cart">
+              <Button variant="outline" size="sm">
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                Cart
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {wishlistBooks.length === 0 ? (
@@ -109,9 +164,17 @@ export default function WishlistPage() {
             <Heart className="h-16 w-16 mx-auto mb-4 text-gray-300" />
             <h2 className="text-xl font-semibold text-gray-900 mb-2">Your wishlist is empty</h2>
             <p className="text-gray-600 mb-6">Start adding books to your wishlist to see them here!</p>
-            <Link href="/books">
-              <Button>Browse Books</Button>
-            </Link>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link href="/books">
+                <Button>Browse Books</Button>
+              </Link>
+              <Link href="/popular">
+                <Button variant="outline">Popular Books</Button>
+              </Link>
+              <Link href="/new-releases">
+                <Button variant="outline">New Releases</Button>
+              </Link>
+            </div>
           </div>
         ) : (
           <>

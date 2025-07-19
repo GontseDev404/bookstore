@@ -8,9 +8,12 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ShoppingCart, Trash2, Minus, Plus, CreditCard, Truck } from "lucide-react"
+import { ShoppingCart, Trash2, Minus, Plus, CreditCard, Truck, User, ArrowLeft, Home, Heart } from "lucide-react"
 import { useContext, useEffect, useState } from "react"
 import { WishlistCartContext } from "@/components/wishlist-cart-context"
+import { GuestCheckout } from "@/components/guest-checkout"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 
 const allBooks = [
   {
@@ -72,6 +75,7 @@ const allBooks = [
 export default function CartPage() {
   const [mounted, setMounted] = useState(false)
   const [quantities, setQuantities] = useState<Record<string, number>>({})
+  const [showGuestCheckout, setShowGuestCheckout] = useState(false)
   const { cart, removeFromCart } = useContext(WishlistCartContext)
 
   useEffect(() => {
@@ -129,9 +133,63 @@ export default function CartPage() {
   return (
     <AppShell>
       <div className="container mx-auto px-4 py-8">
+        {/* Breadcrumbs */}
+        <Breadcrumb className="mb-6">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/" className="flex items-center gap-1">
+                <Home className="h-4 w-4" />
+                Home
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Shopping Cart</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
+        {/* Header with Back Navigation */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Shopping Cart</h1>
-          <p className="text-gray-600">Review your items and proceed to checkout</p>
+          <div className="flex items-center gap-4 mb-4">
+            <Link href="/">
+              <Button variant="ghost" size="icon">
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Shopping Cart</h1>
+              <p className="text-gray-600">Review your items and proceed to checkout</p>
+            </div>
+          </div>
+          
+          {/* Quick Navigation */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            <Link href="/books">
+              <Button variant="outline" size="sm">
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                Continue Shopping
+              </Button>
+            </Link>
+            <Link href="/wishlist">
+              <Button variant="outline" size="sm">
+                <Heart className="h-4 w-4 mr-2" />
+                Wishlist
+              </Button>
+            </Link>
+            <Link href="/deals">
+              <Button variant="outline" size="sm">
+                <Truck className="h-4 w-4 mr-2" />
+                Deals
+              </Button>
+            </Link>
+            <Link href="/help">
+              <Button variant="outline" size="sm">
+                <User className="h-4 w-4 mr-2" />
+                Help
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {cartBooks.length === 0 ? (
@@ -139,9 +197,17 @@ export default function CartPage() {
             <ShoppingCart className="h-16 w-16 mx-auto mb-4 text-gray-300" />
             <h2 className="text-xl font-semibold text-gray-900 mb-2">Your cart is empty</h2>
             <p className="text-gray-600 mb-6">Start shopping to add items to your cart!</p>
-            <Link href="/books">
-              <Button>Browse Books</Button>
-            </Link>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link href="/books">
+                <Button>Browse Books</Button>
+              </Link>
+              <Link href="/popular">
+                <Button variant="outline">Popular Books</Button>
+              </Link>
+              <Link href="/new-releases">
+                <Button variant="outline">New Releases</Button>
+              </Link>
+            </div>
           </div>
         ) : (
           <div className="grid gap-8 lg:grid-cols-3">
@@ -195,7 +261,7 @@ export default function CartPage() {
                               variant="outline"
                               size="icon"
                               onClick={() => removeFromCart(book.id)}
-                              aria-label="Remove from cart"
+                              className="text-red-500 hover:text-red-700"
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -209,87 +275,84 @@ export default function CartPage() {
             </div>
 
             {/* Order Summary */}
-            <div className="lg:col-span-1">
+            <div className="space-y-6">
               <Card>
                 <CardHeader>
                   <CardTitle>Order Summary</CardTitle>
-                  <CardDescription>Review your order details</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span>Subtotal</span>
-                      <span>${subtotal.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Shipping</span>
-                      <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Tax</span>
-                      <span>${tax.toFixed(2)}</span>
-                    </div>
-                    <div className="border-t pt-2">
-                      <div className="flex justify-between font-bold">
-                        <span>Total</span>
-                        <span>${total.toFixed(2)}</span>
-                      </div>
-                    </div>
+                  <div className="flex justify-between">
+                    <span>Subtotal ({cartBooks.length} items)</span>
+                    <span>${subtotal.toFixed(2)}</span>
                   </div>
-
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="promo">Promo Code</Label>
-                      <div className="flex gap-2">
-                        <Input id="promo" placeholder="Enter code" />
-                        <Button variant="outline" size="sm">Apply</Button>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="shipping">Shipping Method</Label>
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2 p-2 border rounded">
-                          <input type="radio" name="shipping" id="standard" defaultChecked />
-                          <label htmlFor="standard" className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <Truck className="h-4 w-4" />
-                              <span>Standard Shipping</span>
-                            </div>
-                            <span className="text-sm text-gray-600">5-7 business days</span>
-                          </label>
-                          <span className="font-semibold">Free</span>
-                        </div>
-                        <div className="flex items-center gap-2 p-2 border rounded">
-                          <input type="radio" name="shipping" id="express" />
-                          <label htmlFor="express" className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <Truck className="h-4 w-4" />
-                              <span>Express Shipping</span>
-                            </div>
-                            <span className="text-sm text-gray-600">2-3 business days</span>
-                          </label>
-                          <span className="font-semibold">$9.99</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <Button className="w-full" size="lg">
-                      <CreditCard className="h-4 w-4 mr-2" />
-                      Proceed to Checkout
-                    </Button>
-
-                    <div className="text-center">
-                      <Link href="/books" className="text-sm text-primary hover:underline">
-                        Continue Shopping
-                      </Link>
+                  <div className="flex justify-between">
+                    <span>Shipping</span>
+                    <span>{shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Tax</span>
+                    <span>${tax.toFixed(2)}</span>
+                  </div>
+                  <div className="border-t pt-4">
+                    <div className="flex justify-between font-bold text-lg">
+                      <span>Total</span>
+                      <span>${total.toFixed(2)}</span>
                     </div>
                   </div>
                 </CardContent>
               </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Shipping Options</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <input type="radio" id="standard" name="shipping" defaultChecked />
+                    <Label htmlFor="standard">Standard Shipping (3-5 days) - FREE</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <input type="radio" id="express" name="shipping" />
+                    <Label htmlFor="express">Express Shipping (1-2 days) - $9.99</Label>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="space-y-3">
+                <Button className="w-full" size="lg">
+                  <CreditCard className="h-4 w-4 mr-2" />
+                  Proceed to Checkout
+                </Button>
+                <Button variant="outline" className="w-full" onClick={() => setShowGuestCheckout(true)}>
+                  <User className="h-4 w-4 mr-2" />
+                  Guest Checkout
+                </Button>
+              </div>
             </div>
           </div>
         )}
+
+        <Dialog open={showGuestCheckout} onOpenChange={setShowGuestCheckout}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Guest Checkout</DialogTitle>
+              <DialogDescription>
+                Complete your purchase without creating an account. Your information will be saved for future orders.
+              </DialogDescription>
+            </DialogHeader>
+            <GuestCheckout
+              onGuestCheckout={(guestData) => {
+                console.log('Guest checkout data:', guestData)
+                alert('Guest checkout completed! (Demo)')
+                setShowGuestCheckout(false)
+              }}
+              onAccountCheckout={() => {
+                alert('Redirecting to account creation...')
+                setShowGuestCheckout(false)
+              }}
+            />
+          </DialogContent>
+        </Dialog>
       </div>
     </AppShell>
   )

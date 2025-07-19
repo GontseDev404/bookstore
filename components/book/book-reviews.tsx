@@ -1,8 +1,11 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { BookRating } from "./book-rating"
-import { Button } from "@/components/ui/button"
+"use client"
 
-interface Review {
+import { Star, ThumbsUp, MessageCircle } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+
+interface CustomerReview {
   id: string
   author: string
   date: string
@@ -12,54 +15,82 @@ interface Review {
 }
 
 interface BookReviewsProps {
-  editorialReviews: string[]
-  customerReviews: Review[]
+  reviews: CustomerReview[]
   averageRating: number
-  reviewCount: number
+  totalReviews: number
+  editorialReview?: string
 }
 
-export function BookReviews({ editorialReviews, customerReviews, averageRating, reviewCount }: BookReviewsProps) {
-  // Add a new CSS class for the editorial reviews to make them stand out more
-  const editorialReviewClass = "rounded-lg bg-amber-50 p-6 border-l-4 border-amber-400 mb-6 shadow-sm"
+export function BookReviews({ reviews, averageRating, totalReviews, editorialReview }: BookReviewsProps) {
+  const editorialReviewClass = "rounded-lg bg-muted p-6 border-l-4 border-primary mb-6 shadow-sm"
+
+  const getStarClass = (starNumber: number, rating: number) => {
+    if (starNumber <= rating) {
+      return "fill-yellow-400 text-yellow-400"
+    } else if (starNumber - rating < 1) {
+      return "fill-yellow-400/50 text-yellow-400"
+    } else {
+      return "fill-muted text-muted-foreground"
+    }
+  }
 
   return (
-    <Tabs defaultValue="editorial" className="w-full">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="editorial">Editorial Reviews</TabsTrigger>
-        <TabsTrigger value="customer">Customer Reviews ({reviewCount})</TabsTrigger>
-      </TabsList>
-      <TabsContent value="editorial" className="mt-6">
-        <div className="space-y-6">
-          {editorialReviews.map((review, index) => (
-            <div key={index} className={editorialReviewClass}>
-              <p className="text-sm leading-relaxed italic text-amber-900">{review}</p>
-            </div>
-          ))}
+    <div className="space-y-6">
+      {/* Editorial Review */}
+      {editorialReview && (
+        <div className={editorialReviewClass}>
+          <h3 className="mb-2 text-sm font-semibold text-foreground">Editorial Review</h3>
+          <p className="text-sm leading-relaxed italic text-muted-foreground">{editorialReview}</p>
         </div>
-      </TabsContent>
-      <TabsContent value="customer" className="mt-6">
-        <div className="mb-6 flex items-center justify-between bg-gradient-to-r from-amber-50 to-white p-4 rounded-lg">
-          <div className="flex items-center gap-4">
-            <div className="text-3xl font-bold text-amber-600">{averageRating.toFixed(1)}</div>
-            <BookRating rating={averageRating} reviewCount={reviewCount} showCount={false} />
+      )}
+
+      {/* Rating Summary */}
+      <div className="mb-6 flex items-center justify-between bg-gradient-to-r from-muted to-background p-4 rounded-lg">
+        <div>
+          <div className="text-3xl font-bold text-primary">{averageRating.toFixed(1)}</div>
+          <div className="flex items-center gap-1">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} className={`h-4 w-4 ${getStarClass(i + 1, averageRating)}`} />
+            ))}
           </div>
-          <Button className="bg-amber-500 hover:bg-amber-600">Write a Review</Button>
+          <p className="text-sm text-muted-foreground">{totalReviews} reviews</p>
         </div>
-        <div className="space-y-6">
-          {customerReviews.map((review) => (
-            <div key={review.id} className="border-b pb-6 hover:bg-amber-50/30 p-4 rounded-lg transition-colors">
-              <div className="mb-2 flex items-center justify-between">
-                <h4 className="font-semibold text-amber-800">{review.title}</h4>
-                <BookRating rating={review.rating} reviewCount={0} showCount={false} />
+        <Button className="bg-primary hover:bg-primary/90">Write a Review</Button>
+      </div>
+
+      {/* Reviews List */}
+      <div className="space-y-4">
+        {reviews.map((review) => (
+          <div key={review.id} className="border-b pb-6 hover:bg-muted/30 p-4 rounded-lg transition-colors">
+            <div className="flex items-start justify-between mb-2">
+              <div>
+                <h4 className="font-semibold text-foreground">{review.title}</h4>
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="flex items-center gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className={`h-3 w-3 ${getStarClass(i + 1, review.rating)}`} />
+                    ))}
+                  </div>
+                  <p className="mb-2 text-sm text-muted-foreground">
+                    by {review.author} • {review.date}
+                  </p>
+                </div>
               </div>
-              <p className="mb-2 text-sm text-amber-700">
-                By <span className="font-medium">{review.author}</span> on {review.date}
-              </p>
-              <p className="text-sm leading-relaxed">{review.content}</p>
             </div>
-          ))}
-        </div>
-      </TabsContent>
-    </Tabs>
+            <p className="text-sm text-muted-foreground leading-relaxed">{review.content}</p>
+            <div className="flex items-center gap-4 mt-3">
+              <Button variant="ghost" size="sm" className="h-8 px-3">
+                <ThumbsUp className="h-3 w-3 mr-1" />
+                Helpful (0)
+              </Button>
+              <Button variant="ghost" size="sm" className="h-8 px-3">
+                <MessageCircle className="h-3 w-3 mr-1" />
+                Reply
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }

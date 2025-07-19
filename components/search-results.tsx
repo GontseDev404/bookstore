@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Grid3X3, List, Filter } from "lucide-react"
+import { Grid3X3, List, Filter, Search } from "lucide-react"
 
 interface SearchResultsProps {
   resultsCount: number
@@ -23,9 +23,10 @@ export function SearchResults({
   currentView
 }: SearchResultsProps) {
   return (
-    <div className="flex items-center justify-between mb-6 p-4 bg-gray-50 rounded-lg">
-      <div className="flex items-center gap-4">
-        <span className="text-sm text-gray-600">
+    <div className="flex items-center justify-between mb-6 p-4 bg-muted rounded-lg">
+      <div className="flex items-center gap-2">
+        <Search className="h-4 w-4 text-muted-foreground" />
+        <span className="text-sm text-muted-foreground">
           {resultsCount} result{resultsCount !== 1 ? 's' : ''} found
         </span>
         

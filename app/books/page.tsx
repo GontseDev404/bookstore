@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button"
 import { SearchFilters, type SearchFilters as SearchFiltersType } from "@/components/search-filters"
 import { SearchSuggestions } from "@/components/search-suggestions"
 import { SearchResults } from "@/components/search-results"
+import { BookRecommendations } from "@/components/book-recommendations"
+import { RecentlyViewed } from "@/components/recently-viewed"
 
 const books = [
   {
@@ -123,7 +125,7 @@ export default function BooksPage() {
     const matchesQuery = title.includes(query) || author.includes(query)
     
     // Advanced filters
-    const matchesCategory = !searchFilters.category || book.category === searchFilters.category
+    const matchesCategory = searchFilters.category === "all" || book.category === searchFilters.category
     const matchesAuthor = !searchFilters.author || author.includes(searchFilters.author.toLowerCase())
     const matchesRating = book.rating >= searchFilters.rating
     const matchesPrice = book.price >= searchFilters.priceRange[0] && book.price <= searchFilters.priceRange[1]
@@ -295,6 +297,12 @@ export default function BooksPage() {
             <div className="col-span-full text-center text-gray-500">No books found.</div>
           )}
         </div>
+
+        {/* Recently Viewed Books */}
+        <RecentlyViewed />
+
+        {/* Book Recommendations */}
+        <BookRecommendations />
       </div>
     </AppShell>
   )
