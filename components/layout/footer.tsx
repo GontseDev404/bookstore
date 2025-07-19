@@ -25,7 +25,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                            <Link href="/bestsellers" className="text-sm text-muted-foreground hover:text-foreground">
+                <Link href="/bestsellers" className="text-sm text-muted-foreground hover:text-foreground">
               Staff Favorites
                 </Link>
               </li>

@@ -89,8 +89,8 @@ export default async function BookPage({ params }: BookPageProps) {
                 </Button>
               </div>
             </div>
-          </div>
-        </div>
+                  </div>
+                  </div>
 
         <Separator className="my-8" />
 
@@ -102,23 +102,23 @@ export default async function BookPage({ params }: BookPageProps) {
               <div className="flex justify-between">
                 <span className="font-medium">ISBN:</span>
                 <span>{book.details.isbn}</span>
-              </div>
+                  </div>
               <div className="flex justify-between">
                 <span className="font-medium">Publisher:</span>
                 <span>{book.details.publisher}</span>
-              </div>
+                  </div>
               <div className="flex justify-between">
                 <span className="font-medium">Publication Date:</span>
                 <span>{book.details.publicationDate}</span>
-              </div>
+                  </div>
               <div className="flex justify-between">
                 <span className="font-medium">Pages:</span>
                 <span>{book.details.pages}</span>
-              </div>
+                  </div>
               <div className="flex justify-between">
                 <span className="font-medium">Language:</span>
                 <span>{book.details.language}</span>
-              </div>
+                </div>
               <div className="flex justify-between">
                 <span className="font-medium">Age Range:</span>
                 <span>{book.details.age}</span>
@@ -141,12 +141,12 @@ export default async function BookPage({ params }: BookPageProps) {
         <Separator className="my-8" />
 
         {/* Customer Reviews */}
-        <BookReviews 
-          editorialReviews={book.editorialReviews}
-          customerReviews={book.customerReviews}
-          averageRating={book.rating}
-          reviewCount={book.reviewCount}
-        />
+          <BookReviews
+            editorialReviews={book.editorialReviews}
+            customerReviews={book.customerReviews}
+            averageRating={book.rating}
+            reviewCount={book.reviewCount}
+          />
 
         <Separator className="my-8" />
 

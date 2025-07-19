@@ -3,13 +3,29 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Search, ShoppingCart, Heart, User, Menu } from "lucide-react"
-import { useState } from "react"
+import { useContext, useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-
+import { SearchContext } from "@/components/search-context"
+import { WishlistCartContext } from "@/components/wishlist-cart-context"
 export function Header() {
-  const [searchQuery, setSearchQuery] = useState("")
+  const { searchQuery, setSearchQuery } = useContext(SearchContext)
+  const { cart } = useContext(WishlistCartContext)
+  const router = useRouter()
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      // Redirect to books page with search query
+      router.push(`/books?search=${encodeURIComponent(searchQuery.trim())}`)
+    }
+  }
+
+  const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value)
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">
@@ -31,7 +47,7 @@ export function Header() {
                   <Link href="/books" className="flex items-center gap-2 font-semibold">
                     Books
                   </Link>
-                          <Link href="/bestsellers" className="flex items-center gap-2 font-semibold">
+                  <Link href="/bestsellers" className="flex items-center gap-2 font-semibold">
           Staff Favorites
                   </Link>
                   <Link href="/new-releases" className="flex items-center gap-2 font-semibold">
@@ -50,16 +66,16 @@ export function Header() {
           </div>
 
           <div className="hidden flex-1 px-6 md:block">
-            <div className="relative">
+            <form onSubmit={handleSearch} className="relative">
               <Input
                 type="search"
                 placeholder="Search by title, author, or ISBN"
                 className="w-full pl-10"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handleSearchInput}
               />
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            </div>
+            </form>
           </div>
 
           <div className="flex items-center gap-3">
@@ -67,21 +83,27 @@ export function Header() {
               <Search className="h-5 w-5" />
               <span className="sr-only">Search</span>
             </Button>
-            <Button variant="ghost" size="icon">
-              <User className="h-5 w-5" />
-              <span className="sr-only">Account</span>
-            </Button>
-            <Button variant="ghost" size="icon">
-              <Heart className="h-5 w-5" />
-              <span className="sr-only">Wishlist</span>
-            </Button>
-            <Button variant="ghost" size="icon" className="relative">
-              <ShoppingCart className="h-5 w-5" />
-              <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">
-                0
-              </span>
-              <span className="sr-only">Cart</span>
-            </Button>
+            <Link href="/profile">
+              <Button variant="ghost" size="icon">
+                <User className="h-5 w-5" />
+                <span className="sr-only">Account</span>
+              </Button>
+            </Link>
+            <Link href="/wishlist">
+              <Button variant="ghost" size="icon" className="relative">
+                <Heart className="h-5 w-5" />
+                <span className="sr-only">Wishlist</span>
+              </Button>
+            </Link>
+            <Link href="/cart">
+              <Button variant="ghost" size="icon" className="relative">
+                <ShoppingCart className="h-5 w-5" />
+                <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">
+                  {cart.length}
+                </span>
+                <span className="sr-only">Cart</span>
+              </Button>
+            </Link>
           </div>
         </div>
 
@@ -93,7 +115,7 @@ export function Header() {
               </Link>
             </li>
             <li>
-                          <Link href="/bestsellers" className="text-sm font-medium hover:text-primary">
+              <Link href="/bestsellers" className="text-sm font-medium hover:text-primary">
               Staff Favorites
               </Link>
             </li>

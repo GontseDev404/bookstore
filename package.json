@@ -6,7 +6,10 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "lint:fix": "next lint --fix",
+    "start": "next start",
+    "type-check": "tsc --noEmit",
+    "test:ci": "echo 'No tests configured yet'"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

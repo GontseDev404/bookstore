@@ -82,3 +82,14 @@ docker run -p 3000:3000 bookstore-app
 ## License
 
 This project is licensed under the MIT License. 
+
+---
+
+## 🌐 Live Cloud Deployment
+- **Live URL:** [https://bookhaven-app--b5bhqv6.victoriouspond-e9b4a388.eastus.azurecontainerapps.io/](https://bookhaven-app--b5bhqv6.victoriouspond-e9b4a388.eastus.azurecontainerapps.io/)
+- **Platform:** Azure Container Apps
+
+### Redeployment Steps
+1. Push to the `main` branch on GitHub, or
+2. Manually run the `Deploy to Azure Container Apps` workflow in GitHub Actions
+   - This will build, push, and deploy the latest Docker image automatically 
