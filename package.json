@@ -9,7 +9,9 @@
     "lint:fix": "next lint --fix",
     "start": "next start",
     "type-check": "tsc --noEmit",
-    "test:ci": "echo 'No tests configured yet'"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:ci": "jest --ci --coverage --watchAll=false"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -63,9 +65,17 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "eslint": "^9.31.0",
+    "eslint-config-next": "^15.4.2",
+    "jest": "^30.0.4",
+    "jest-environment-jsdom": "^30.0.4",
     "postcss": "^8.5",
     "tailwindcss": "^3.4.17",
     "typescript": "^5"
