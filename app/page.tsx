@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import { BookRating } from "@/components/book/book-rating"
 import { WishlistCartContext } from "@/components/wishlist-cart-context"
 import { useContext } from "react"
@@ -62,8 +61,8 @@ export default function HomePage() {
     }
   ]
 
-  // Shuffle the slides for random selection
-  const shuffledSlides = [...heroSlides].sort(() => Math.random() - 0.5)
+  // Use slides in fixed order to prevent hydration mismatch
+  const slides = heroSlides
 
   // Featured books data
   const featuredBooks = [
@@ -170,18 +169,20 @@ export default function HomePage() {
     if (!isPlaying) return
 
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % shuffledSlides.length)
+      setCurrentSlide((prev) => (prev + 1) % slides.length)
     }, 5000)
 
     return () => clearInterval(interval)
-  }, [isPlaying, shuffledSlides.length])
+  }, [isPlaying, slides.length])
 
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'ArrowLeft') {
+        event.preventDefault()
         handlePreviousSlide()
       } else if (event.key === 'ArrowRight') {
+        event.preventDefault()
         handleNextSlide()
       } else if (event.key === ' ') {
         event.preventDefault()
@@ -193,12 +194,50 @@ export default function HomePage() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isPlaying])
 
+  // Touch/swipe support
+  useEffect(() => {
+    let startX = 0
+    let endX = 0
+
+    const handleTouchStart = (e: Event) => {
+      const touchEvent = e as TouchEvent
+      startX = touchEvent.touches[0].clientX
+    }
+
+    const handleTouchEnd = (e: Event) => {
+      const touchEvent = e as TouchEvent
+      endX = touchEvent.changedTouches[0].clientX
+      const diff = startX - endX
+      
+      if (Math.abs(diff) > 50) { // Minimum swipe distance
+        if (diff > 0) {
+          handleNextSlide()
+        } else {
+          handlePreviousSlide()
+        }
+      }
+    }
+
+    const slideshowElement = document.querySelector('.slideshow-container')
+    if (slideshowElement) {
+      slideshowElement.addEventListener('touchstart', handleTouchStart)
+      slideshowElement.addEventListener('touchend', handleTouchEnd)
+    }
+
+    return () => {
+      if (slideshowElement) {
+        slideshowElement.removeEventListener('touchstart', handleTouchStart)
+        slideshowElement.removeEventListener('touchend', handleTouchEnd)
+      }
+    }
+  }, [])
+
   const handlePreviousSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + shuffledSlides.length) % shuffledSlides.length)
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
   }
 
   const handleNextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % shuffledSlides.length)
+    setCurrentSlide((prev) => (prev + 1) % slides.length)
   }
 
   const handleSlideClick = (index: number) => {
@@ -223,7 +262,7 @@ export default function HomePage() {
           {/* Slide Indicators */}
           <div className="flex justify-center mb-3 sm:mb-4">
             <div className="flex gap-1 sm:gap-2">
-              {shuffledSlides.map((_, index) => (
+              {slides.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => handleSlideClick(index)}
@@ -268,15 +307,14 @@ export default function HomePage() {
             </Button>
           </div>
 
-          <Carousel
-            className="w-full custom-carousel"
-            opts={{
-              loop: true,
-            }}
-          >
-            <CarouselContent>
-              {shuffledSlides.map((slide, index) => (
-                <CarouselItem key={slide.id} className="transition-all duration-500">
+          {/* Custom Slideshow */}
+          <div className="relative w-full overflow-hidden rounded-lg slideshow-container">
+            <div 
+              className="flex transition-transform duration-500 ease-in-out"
+              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+            >
+              {slides.map((slide, index) => (
+                <div key={slide.id} className="w-full flex-shrink-0">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-center">
                     <div className="relative group">
                       <Link href={slide.link} className="block">
@@ -337,10 +375,10 @@ export default function HomePage() {
                       </div>
                     </div>
                   </div>
-                </CarouselItem>
+                </div>
               ))}
-            </CarouselContent>
-          </Carousel>
+            </div>
+          </div>
         </div>
       </section>
 
