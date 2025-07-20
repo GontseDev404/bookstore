@@ -3,11 +3,46 @@ name: Deploy to Azure Container Apps
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
+env:
+  REGISTRY: bookhavenregistry.azurecr.io
+  IMAGE_NAME: bookstore-app
+  CONTAINER_APP_NAME: bookhaven-app
+  RESOURCE_GROUP: bookhaven-rg
+
 jobs:
-  build-and-deploy:
+  test:
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linting
+        run: npm run lint
+
+      - name: Run type checking
+        run: npm run type-check
+
+      - name: Build application
+        run: npm run build
+
+  build-and-deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,22 +58,58 @@ jobs:
       - name: Log in to Azure Container Registry
         uses: azure/docker-login@v1
         with:
-          login-server: bookhavenregistry.azurecr.io
+          login-server: ${{ env.REGISTRY }}
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix={{branch}}-
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: bookhavenregistry.azurecr.io/bookstore-app:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Deploy to Azure Container Apps
         uses: azure/CLI@v1
         with:
           inlineScript: |
+            # Get the latest image tag
+            LATEST_TAG=$(az acr repository show-tags --name bookhavenregistry --repository bookstore-app --orderby time_desc --output tsv --query '[0]')
+            
+            # Update the container app with the latest image
             az containerapp update \
-              --name bookhaven-app \
-              --resource-group bookhaven-rg \
-              --image bookhavenregistry.azurecr.io/bookstore-app:latest 
+              --name ${{ env.CONTAINER_APP_NAME }} \
+              --resource-group ${{ env.RESOURCE_GROUP }} \
+              --image ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$LATEST_TAG \
+              --set-env-vars NODE_ENV=production,NEXT_TELEMETRY_DISABLED=1
+
+      - name: Verify deployment
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            # Wait for deployment to complete
+            sleep 30
+            
+            # Get the container app URL
+            APP_URL=$(az containerapp show --name ${{ env.CONTAINER_APP_NAME }} --resource-group ${{ env.RESOURCE_GROUP }} --query properties.configuration.ingress.fqdn --output tsv)
+            
+            # Test the application
+            curl -f http://$APP_URL/api/health || echo "Health check failed"
+            
+            echo "Deployment completed successfully!"
+            echo "Application URL: http://$APP_URL" 

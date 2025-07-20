@@ -1,0 +1,55 @@
+apiVersion: 2023-05-01
+location: eastus
+name: bookhaven-app
+properties:
+  managedEnvironmentId: /subscriptions/{subscription-id}/resourceGroups/bookhaven-rg/providers/Microsoft.App/managedEnvironments/bookhaven-env
+  configuration:
+    ingress:
+      external: true
+      targetPort: 3000
+      traffic:
+        - latestRevision: true
+          weight: 100
+      allowInsecure: false
+    secrets:
+      - name: acr-password
+        value: {acr-password}
+  template:
+    containers:
+      - name: bookstore-app
+        image: bookhavenregistry.azurecr.io/bookstore-app:latest
+        env:
+          - name: NODE_ENV
+            value: production
+          - name: NEXT_TELEMETRY_DISABLED
+            value: "1"
+          - name: PORT
+            value: "3000"
+        resources:
+          cpu: 0.5
+          memory: 1Gi
+        probes:
+          - type: Readiness
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          - type: Liveness
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+    scale:
+      minReplicas: 1
+      maxReplicas: 10
+      rules:
+        - name: http-scaling
+          http:
+            metadata:
+              concurrentRequests: "100"
+    imageRegistryCredentials:
+      - server: bookhavenregistry.azurecr.io
+        username: bookhavenregistry
+        passwordSecretRef: acr-password 
