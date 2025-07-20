@@ -72,7 +72,7 @@ const mainNavItems: SidebarItem[] = [
     icon: TrendingUp,
     label: "Popular Books",
     href: "/popular",
-    description: "Most popular books"
+    description: "Trending and highly-rated books"
   },
   {
     icon: Gift,

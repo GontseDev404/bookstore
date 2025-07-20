@@ -40,7 +40,7 @@ const allBooks = [
     coverImage: "/images/the-monkey-blanket-cover.png",
     rating: 4.9,
     reviewCount: 45,
-    price: 22.99,
+    price: 19.99,
   },
   {
     id: "fearless",
@@ -49,7 +49,7 @@ const allBooks = [
     coverImage: "/images/fearless-cover.webp",
     rating: 4.9,
     reviewCount: 41,
-    price: 29.99,
+    price: 22.99,
   },
   {
     id: "great-big-beautiful-life",
@@ -58,7 +58,7 @@ const allBooks = [
     coverImage: "/images/great-big-beautiful-life-cover.webp",
     rating: 4.5,
     reviewCount: 33,
-    price: 26.99,
+    price: 18.99,
   },
   {
     id: "the-tenant",
@@ -67,7 +67,7 @@ const allBooks = [
     coverImage: "/images/the-tenant-cover.webp",
     rating: 4.8,
     reviewCount: 39,
-    price: 27.99,
+    price: 21.99,
   },
   {
     id: "remarkably-bright-creatures",
@@ -76,7 +76,7 @@ const allBooks = [
     coverImage: "/images/remarkably-bright-creatures-cover.webp",
     rating: 4.6,
     reviewCount: 35,
-    price: 25.99,
+    price: 20.99,
   },
 ]
 
@@ -145,7 +145,7 @@ export function RecentlyViewed({ maxItems = 6 }: RecentlyViewedProps) {
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {recentlyViewed.map((book) => (
           <div key={book.id} className="group">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+            <div className="bg-card rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
               <div className="aspect-[3/4] relative overflow-hidden">
                 <Link 
                   href={`/books/${book.id}`} 

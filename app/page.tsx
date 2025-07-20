@@ -1,16 +1,72 @@
-import Image from "next/image"
-import Link from "next/link"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import { AppShell } from "@/components/layout/app-shell"
+"use client"
+
+import { useState, useEffect } from "react"
+import { ChevronLeft, ChevronRight, Star, Heart, ShoppingCart, ArrowRight, Play, Pause, BookOpen, Headphones, Award, TrendingUp, Clock, Users, Eye, Bookmark, Share2, MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import { BookRating } from "@/components/book/book-rating"
-import { CategoryIcon } from "@/components/category-icon"
-import { Input } from "@/components/ui/input"
-import { NewsletterSignup } from "@/components/newsletter-signup"
+import { WishlistCartContext } from "@/components/wishlist-cart-context"
+import { useContext } from "react"
+import Link from "next/link"
+import Image from "next/image"
 
 export default function HomePage() {
-  // Staff Favorites data
-const staffFavorites = [
+  const { wishlist, toggleWishlist, cart, addToCart } = useContext(WishlistCartContext)
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [isPlaying, setIsPlaying] = useState(true)
+
+  // Hero carousel data with different book types
+  const heroSlides = [
+    {
+      id: "mark-twain",
+      title: "MARK TWAIN",
+      author: "Ron Chernow",
+      description: "Dive deep into the life of one of America's literary geniuses through the eyes of a master biographer.",
+      image: "/images/mark-twain-cover.webp",
+      link: "/books/mark-twain",
+      badge: "$5 OFF",
+      type: "Deals"
+    },
+    {
+      id: "fearless",
+      title: "FEARLESS",
+      author: "Lauren Roberts",
+      description: "A gripping tale of courage and resilience in the face of adversity.",
+      image: "/images/fearless-cover.webp",
+      link: "/books/fearless",
+      badge: "NEW",
+      type: "New Release"
+    },
+    {
+      id: "the-tenant",
+      title: "THE TENANT",
+      author: "Freida McFadden",
+      description: "A psychological thriller that will keep you guessing until the very end.",
+      image: "/images/the-tenant-cover.webp",
+      link: "/books/the-tenant",
+      badge: "BESTSELLER",
+      type: "Bestseller"
+    },
+    {
+      id: "silver-feet-and-her-wonder",
+      title: "SILVER FEET AND HER WONDER",
+      author: "Nana Ndlovana-Mthimkhulu",
+      description: "A captivating story of wonder and discovery that will enchant readers of all ages.",
+      image: "/images/silver-feet-cover.png",
+      link: "/books/silver-feet-and-her-wonder",
+      badge: "FEATURED",
+      type: "Featured"
+    }
+  ]
+
+  // Shuffle the slides for random selection
+  const shuffledSlides = [...heroSlides].sort(() => Math.random() - 0.5)
+
+  // Featured books data
+  const featuredBooks = [
     {
       id: "silver-feet-and-her-wonder",
       title: "Silver Feet and Her Wonder",
@@ -18,17 +74,24 @@ const staffFavorites = [
       coverImage: "/images/silver-feet-cover.png",
       rating: 4.8,
       reviewCount: 37,
+      price: 24.99,
+      originalPrice: 29.99,
+      inStock: true,
       link: "/books/silver-feet-and-her-wonder",
+      badge: "Bestseller"
     },
     {
       id: "the-monkey-blanket",
       title: "The Monkey Blanket",
       author: "Nana Ndlovana-Mthimkhulu",
-      coverImage:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Silver%20Feet%20and%20Her%20Wonder%20by%20Nana%20Ndlovana-Mthimkhulu.%20Create%20a%20childrens%20book%20cover-4-S6y67Umej9HayzZVSVJfmdxDMOyKLK.png",
+      coverImage: "/images/the-monkey-blanket-cover.png",
       rating: 4.9,
       reviewCount: 45,
+      price: 19.99,
+      originalPrice: 24.99,
+      inStock: true,
       link: "/books/the-monkey-blanket",
+      badge: "New Release"
     },
     {
       id: "fearless",
@@ -37,7 +100,11 @@ const staffFavorites = [
       coverImage: "/images/fearless-cover.webp",
       rating: 4.9,
       reviewCount: 41,
-      link: "/books/silver-feet-and-her-wonder",
+      price: 22.99,
+      originalPrice: 27.99,
+      inStock: false,
+      link: "/books/fearless",
+      badge: "Popular"
     },
     {
       id: "great-big-beautiful-life",
@@ -46,7 +113,11 @@ const staffFavorites = [
       coverImage: "/images/great-big-beautiful-life-cover.webp",
       rating: 4.5,
       reviewCount: 33,
-      link: "/books/silver-feet-and-her-wonder",
+      price: 18.99,
+      originalPrice: 23.99,
+      inStock: true,
+      link: "/books/great-big-beautiful-life",
+      badge: "Staff Pick"
     },
     {
       id: "the-tenant",
@@ -55,7 +126,11 @@ const staffFavorites = [
       coverImage: "/images/the-tenant-cover.webp",
       rating: 4.8,
       reviewCount: 39,
-      link: "/books/silver-feet-and-her-wonder",
+      price: 21.99,
+      originalPrice: 26.99,
+      inStock: true,
+      link: "/books/the-tenant",
+      badge: "Thriller"
     },
     {
       id: "remarkably-bright-creatures",
@@ -64,592 +139,400 @@ const staffFavorites = [
       coverImage: "/images/remarkably-bright-creatures-cover.webp",
       rating: 4.6,
       reviewCount: 35,
-      link: "/books/silver-feet-and-her-wonder",
-    },
-  ]
-
-  // Fiction books data
-  const fictionBooks = [
-    {
-      id: "never-flinch",
-      title: "Never Flinch",
-      author: "Stephen King",
-      coverImage:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/lf%20%287%29-OMK3W3CZ6GOb4axULSgC49I7jGZIc5.webp",
-      rating: 4.8,
-      reviewCount: 42,
-    },
-    {
-      id: "emperor-of-gladness",
-      title: "The Emperor of Gladness",
-      author: "Ocean Vuong",
-      coverImage: "/images/the-emperor-of-gladness-cover.webp",
-      rating: 4.9,
-      reviewCount: 42,
-    },
-    {
-      id: "run-for-the-hills",
-      title: "Run for the Hills",
-      author: "Kevin Wilson",
-      coverImage: "/images/run-for-the-hills-cover.webp",
-      rating: 4.7,
-      reviewCount: 36,
-    },
-    {
-      id: "speak-to-me-of-home",
-      title: "Speak to Me of Home",
-      author: "Jeanine Cummins",
-      coverImage: "/images/speak-to-me-of-home-cover.webp",
-      rating: 4.6,
-      reviewCount: 31,
-    },
-    {
-      id: "sleep",
-      title: "Sleep: A Novel",
-      author: "Honor Jones",
-      coverImage: "/images/sleep-cover.webp",
-      rating: 4.4,
-      reviewCount: 28,
-    },
-    {
-      id: "marble-hall-murders",
-      title: "Marble Hall Murders",
-      author: "Anthony Horowitz",
-      coverImage: "/images/marble-hall-murders-cover.webp",
-      rating: 4.8,
-      reviewCount: 39,
-    },
-  ]
-
-  // Audiobooks data
-  const audiobooks = [
-    {
-      id: "big-dumb-eyes",
-      title: "Big Dumb Eyes: Stories from a Comedian",
-      author: "Nate Bargatze",
-      coverImage:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/lf%20%286%29-RTR1mIiouECBNXhGHvnA1jkty7ROcf.webp",
-      rating: 4.5,
-      reviewCount: 32,
-    },
-    {
-      id: "class-clown",
-      title: "Class Clown: The Memoirs of a Class Clown",
-      author: "Dave Barry",
-      coverImage: "/images/class-clown-cover.webp",
-      rating: 4.7,
-      reviewCount: 29,
-    },
-    {
-      id: "champion-mindset",
-      title: "Champion Mindset: Coach, Competitor, Change-Maker",
-      author: "Patrick Mouratoglou",
-      coverImage: "/images/champion-mindset-cover.webp",
-      rating: 4.6,
-      reviewCount: 27,
-    },
-    {
-      id: "immaculate-conception",
-      title: "Immaculate Conception: A Novel",
-      author: "Ling Ling Huang",
-      coverImage: "/images/immaculate-conception-cover.webp",
-      rating: 4.4,
-      reviewCount: 24,
-    },
-    {
-      id: "anji-kills-a-king",
-      title: "Anji Kills a King",
-      author: "Evan Leikam",
-      coverImage: "/images/anji-kills-a-king-cover.webp",
-      rating: 4.5,
-      reviewCount: 31,
-    },
-    {
-      id: "the-devils",
-      title: "The Devils",
-      author: "Joe Abercrombie",
-      coverImage: "/images/the-devils-cover.webp",
-      rating: 4.9,
-      reviewCount: 45,
-    },
-  ]
-
-  // Nonfiction books data
-  const nonfictionBooks = [
-    {
-      id: "mark-twain",
-      title: "Mark Twain",
-      author: "Ron Chernow",
-      coverImage: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/lf-a3haZVeLimh5IK4bFTYDreelLs2Icl.webp",
-      rating: 4.8,
-      reviewCount: 37,
-    },
-    {
-      id: "illustrated-meditations",
-      title: "The Illustrated Meditations",
-      author: "Marcus Aurelius",
-      coverImage:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/lf%20%281%29-QYaXRIYANhDSHpTxwuTMDYkHPTve4g.webp",
-      rating: 4.6,
-      reviewCount: 29,
-    },
-    {
-      id: "third-reich-of-dreams",
-      title: "The Third Reich of Dreams",
-      author: "Charlotte Beradt",
-      coverImage: "/images/third-reich-of-dreams-cover.webp",
-      rating: 4.5,
-      reviewCount: 23,
-    },
-    {
-      id: "we-can-do-hard-things",
-      title: "We Can Do Hard Things",
-      author: "Glennon Doyle",
-      coverImage: "/images/we-can-do-hard-things-cover.webp",
-      rating: 4.7,
-      reviewCount: 2341,
-    },
-    {
-      id: "shield-of-sparrows",
-      title: "Shield of Sparrows",
-      author: "Sarah Crossan",
-      coverImage: "/images/shield-of-sparrows-cover.webp",
-      rating: 4.4,
-      reviewCount: 18,
-    },
-    {
-      id: "all-fours",
-      title: "All Fours",
-      author: "Miranda July",
-      coverImage: "/images/all-fours-cover.webp",
-      rating: 4.6,
-      reviewCount: 25,
-    },
-  ]
-
-  // Nature books data
-  const natureBooks = [
-    {
-      id: "native-nations",
-      title: "Native Nations",
-      author: "Kathleen DuVal",
-      coverImage: "/images/native-nations-cover.webp",
-      rating: 4.5,
-      reviewCount: 445,
-    },
-    {
-      id: "the-emperor-of-gladness",
-      title: "The Emperor of Gladness",
-      author: "Robert McGill",
-      coverImage: "/images/the-emperor-of-gladness-cover.webp",
-      rating: 4.4,
-      reviewCount: 678,
-    },
-    {
-      id: "the-tenant",
-      title: "The Tenant",
-      author: "Katy Loutzenhiser",
-      coverImage: "/images/the-tenant-cover.webp",
-      rating: 4.3,
-      reviewCount: 523,
-    },
-    {
-      id: "the-monkey-blanket",
-      title: "The Monkey Blanket",
-      author: "Sarah Crossan",
-      coverImage: "/images/the-monkey-blanket-cover.png",
-      rating: 4.6,
-      reviewCount: 789,
-    },
-    {
-      id: "we-can-do-hard-things",
-      title: "We Can Do Hard Things",
-      author: "Glennon Doyle",
-      coverImage: "/images/we-can-do-hard-things-cover.webp",
-      rating: 4.7,
-      reviewCount: 2341,
-    },
-    {
-      id: "remarkably-bright-creatures",
-      title: "Remarkably Bright Creatures",
-      author: "Shelby Van Pelt",
-      coverImage: "/images/remarkably-bright-creatures-cover.webp",
-      rating: 4.6,
-      reviewCount: 892,
-    },
-  ]
-
-  // Coming soon books data
-  const comingSoonBooks = [
-    {
-      id: "the-garden-whispers",
-      title: "The Garden Whispers",
-      author: "Nana Ndlovana-Mthimkhulu",
-      coverImage: "/images/shield-of-sparrows-cover.webp",
-      rating: 0,
-      reviewCount: 0,
-    },
-    {
-      id: "the-river-sings",
-      title: "The River Sings",
-      author: "Nana Ndlovana-Mthimkhulu",
-      coverImage: "/images/all-fours-cover.webp",
-      rating: 0,
-      reviewCount: 0,
-    },
-    {
-      id: "the-mountain-calls",
-      title: "The Mountain Calls",
-      author: "Nana Ndlovana-Mthimkhulu",
-      coverImage: "/images/we-can-do-hard-things-cover.webp",
-      rating: 0,
-      reviewCount: 0,
-    },
-  ]
-
-  // Book club books data
-  const bookClubBooks = [
-    {
-      id: "the-garden-whispers",
-      title: "The Garden Whispers",
-      author: "Nana Ndlovana-Mthimkhulu",
-      coverImage: "/images/shield-of-sparrows-cover.webp",
-      rating: 4.7,
-      reviewCount: 28,
-    },
-    {
-      id: "the-river-sings",
-      title: "The River Sings",
-      author: "Nana Ndlovana-Mthimkhulu",
-      coverImage: "/images/all-fours-cover.webp",
-      rating: 4.6,
-      reviewCount: 31,
-    },
-    {
-      id: "the-mountain-calls",
-      title: "The Mountain Calls",
-      author: "Nana Ndlovana-Mthimkhulu",
-      coverImage: "/images/we-can-do-hard-things-cover.webp",
-      rating: 4.8,
-      reviewCount: 42,
-    },
+      price: 20.99,
+      originalPrice: 25.99,
+      inStock: true,
+      link: "/books/remarkably-bright-creatures",
+      badge: "Award Winner"
+    }
   ]
 
   // Categories data
   const categories = [
-    { name: "Fiction", icon: "book", count: 1250 },
-    { name: "Non-Fiction", icon: "graduation-cap", count: 890 },
-    { name: "Children's", icon: "baby", count: 450 },
-    { name: "Audiobooks", icon: "headphones", count: 320 },
-    { name: "Science Fiction", icon: "rocket", count: 280 },
-    { name: "Mystery", icon: "search", count: 340 },
+    { name: "Fiction", icon: BookOpen, count: "2.5k", color: "bg-blue-500", link: "/categories/fiction" },
+    { name: "Non-Fiction", icon: BookOpen, count: "1.8k", color: "bg-green-500", link: "/categories/nonfiction" },
+    { name: "Audiobooks", icon: Headphones, count: "1.2k", color: "bg-purple-500", link: "/audiobooks" },
+    { name: "Children's", icon: BookOpen, count: "950", color: "bg-yellow-500", link: "/categories/children" },
+    { name: "Academic", icon: BookOpen, count: "750", color: "bg-red-500", link: "/categories/academic" },
+    { name: "Magazines", icon: BookOpen, count: "500", color: "bg-indigo-500", link: "/categories/magazines" }
   ]
 
+  // Stats data
+  const stats = [
+    { label: "Books Available", value: "50,000+", icon: BookOpen },
+    { label: "Happy Customers", value: "100,000+", icon: Users },
+    { label: "Audiobooks", value: "15,000+", icon: Headphones },
+    { label: "Fast Delivery", value: "24-48h", icon: Clock }
+  ]
+
+  // Auto-play carousel
+  useEffect(() => {
+    if (!isPlaying) return
+
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % shuffledSlides.length)
+    }, 5000)
+
+    return () => clearInterval(interval)
+  }, [isPlaying, shuffledSlides.length])
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowLeft') {
+        handlePreviousSlide()
+      } else if (event.key === 'ArrowRight') {
+        handleNextSlide()
+      } else if (event.key === ' ') {
+        event.preventDefault()
+        setIsPlaying(!isPlaying)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isPlaying])
+
+  const handlePreviousSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + shuffledSlides.length) % shuffledSlides.length)
+  }
+
+  const handleNextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % shuffledSlides.length)
+  }
+
+  const handleSlideClick = (index: number) => {
+    setCurrentSlide(index)
+  }
+
+  const handleAddToCart = (bookId: string) => {
+    if (!cart.includes(bookId)) {
+      addToCart(bookId)
+    }
+  }
+
+  const handleToggleWishlist = (bookId: string) => {
+    toggleWishlist(bookId)
+  }
+
   return (
-    <AppShell>
+    <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-primary to-primary/80 text-primary-foreground">
-        <div className="container mx-auto px-4 py-16">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Discover Your Next
-              <span className="block text-primary-foreground/90">Great Read</span>
-            </h1>
-            <p className="text-xl mb-8 text-primary-foreground/90">
-              Explore thousands of books across all genres. From bestsellers to hidden gems, 
-              find your perfect story at BookHaven.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Input 
-                placeholder="Search by title, author, or ISBN..."
-                className="flex-1 text-foreground placeholder:text-muted-foreground"
-              />
-              <Button size="lg" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90">
-                Search Books
-              </Button>
+      <section className="relative bg-gradient-to-br from-amber-900 via-amber-800 to-amber-700">
+        <div className="container mx-auto px-4 py-4 sm:py-6">
+          {/* Slide Indicators */}
+          <div className="flex justify-center mb-3 sm:mb-4">
+            <div className="flex gap-1 sm:gap-2">
+              {shuffledSlides.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleSlideClick(index)}
+                  className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
+                    index === currentSlide 
+                      ? 'bg-white scale-110' 
+                      : 'bg-white/50 hover:bg-white/75'
+                  }`}
+                />
+              ))}
             </div>
+            {/* Play/Pause Button */}
+            <Button
+              onClick={() => setIsPlaying(!isPlaying)}
+              variant="ghost"
+              size="icon"
+              className="ml-4 bg-white/20 hover:bg-white/30 text-white border-white/30 backdrop-blur-sm h-6 w-6 sm:h-8 sm:w-8"
+            >
+              {isPlaying ? <Pause className="h-3 w-3 sm:h-4 sm:w-4" /> : <Play className="h-3 w-3 sm:h-4 sm:w-4" />}
+            </Button>
           </div>
+
+          {/* Custom Navigation Buttons */}
+          <div className="absolute top-1/2 left-2 right-2 sm:left-4 sm:right-4 flex justify-between items-center pointer-events-none z-10">
+            <Button
+              onClick={handlePreviousSlide}
+              variant="ghost"
+              size="icon"
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30 pointer-events-auto backdrop-blur-sm h-8 w-8 sm:h-10 sm:w-10 transition-all duration-200 hover:scale-110"
+              aria-label="Previous slide"
+            >
+              <ChevronLeft className="h-4 w-4 sm:h-6 sm:w-6" />
+            </Button>
+            <Button
+              onClick={handleNextSlide}
+              variant="ghost"
+              size="icon"
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30 pointer-events-auto backdrop-blur-sm h-8 w-8 sm:h-10 sm:w-10 transition-all duration-200 hover:scale-110"
+              aria-label="Next slide"
+            >
+              <ChevronRight className="h-4 w-4 sm:h-6 sm:w-6" />
+            </Button>
+          </div>
+
+          <Carousel
+            className="w-full custom-carousel"
+            opts={{
+              loop: true,
+            }}
+          >
+            <CarouselContent>
+              {shuffledSlides.map((slide, index) => (
+                <CarouselItem key={slide.id} className="transition-all duration-500">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-center">
+                    <div className="relative group">
+                      <Link href={slide.link} className="block">
+                        <div className="aspect-[3/4] relative max-w-[200px] sm:max-w-xs mx-auto transform transition-transform duration-500 group-hover:scale-105 cursor-pointer">
+                          <Image
+                            src={slide.image}
+                            alt={slide.title}
+                            fill
+                            className="object-cover rounded-lg shadow-xl group-hover:shadow-2xl transition-shadow duration-300"
+                          />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 rounded-lg"></div>
+                          <Badge className="absolute top-1 left-1 sm:top-2 sm:left-2 bg-red-500 text-white animate-pulse text-xs z-10">
+                            {slide.badge}
+                          </Badge>
+                          <Badge className="absolute top-1 right-1 sm:top-2 sm:right-2 bg-blue-500 text-white text-xs z-10">
+                            {slide.type}
+                          </Badge>
+                          {/* Hover overlay with "View Details" text */}
+                          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <div className="bg-white/90 text-amber-900 px-4 py-2 rounded-lg font-semibold text-sm">
+                              View Details
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    </div>
+                    <div className="space-y-3 sm:space-y-4 text-white text-center lg:text-left">
+                      <h1 className="text-2xl sm:text-3xl lg:text-5xl font-bold leading-tight animate-fade-in">
+                        {slide.title}
+                      </h1>
+                      <p className="text-base sm:text-lg text-white/90 animate-fade-in animation-delay-200">
+                        {slide.author}
+                      </p>
+                      <p className="text-white/80 text-sm sm:text-base animate-fade-in animation-delay-400">
+                        {slide.description}
+                      </p>
+                      <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-3 sm:gap-4 animate-fade-in animation-delay-600">
+                        <Link href={slide.link}>
+                          <Button 
+                            size="lg" 
+                            className="bg-white text-amber-900 hover:bg-white/90 font-semibold transform hover:scale-105 transition-all duration-300 text-sm sm:text-base shadow-lg hover:shadow-xl"
+                          >
+                            SHOP NOW
+                          </Button>
+                        </Link>
+                        <Button 
+                          variant="outline" 
+                          size="lg"
+                          className="border-white text-white hover:bg-white hover:text-amber-900 font-semibold transform hover:scale-105 transition-all duration-300 text-sm sm:text-base"
+                          onClick={() => handleToggleWishlist(slide.id.toString())}
+                        >
+                          <Heart 
+                            className="h-4 w-4 mr-2" 
+                            fill={wishlist.includes(slide.id.toString()) ? "currentColor" : "none"}
+                          />
+                          {wishlist.includes(slide.id.toString()) ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
         </div>
       </section>
 
-      {/* Staff Favorites Section */}
-      <section className="container mx-auto px-4 py-12">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-2xl font-bold">Staff Favorites</h2>
-            <p className="text-muted-foreground">Curated picks from our bookworms</p>
-          </div>
-          <Link href="/bestsellers" className="text-sm font-medium text-primary hover:underline">
-            View All →
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {staffFavorites.map((book) => (
-            <Link key={book.id} href={book.link} className="group">
-              <div className="aspect-[3/4] relative overflow-hidden rounded-lg mb-3">
-                <Image
-                  src={book.coverImage}
-                  alt={book.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-200"
-                />
-              </div>
-              <h3 className="line-clamp-1 font-medium group-hover:text-primary">{book.title}</h3>
-              <p className="text-sm text-muted-foreground">by {book.author}</p>
-              <BookRating rating={book.rating} reviewCount={book.reviewCount} size="sm" />
+      {/* Featured Books Section */}
+      <section className="py-8 sm:py-16 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-4">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">Featured Books</h2>
+              <p className="text-muted-foreground text-sm sm:text-base">Discover our handpicked selection of must-read titles</p>
+            </div>
+            <Link href="/books">
+              <Button variant="outline" className="w-full sm:w-auto">
+                View All Books
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
             </Link>
-          ))}
-        </div>
-      </section>
+          </div>
 
-      {/* Fiction Section */}
-      <section className="container mx-auto px-4 py-12">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-2xl font-bold">Fiction</h2>
-            <p className="text-muted-foreground">Stories that transport you to new worlds</p>
-          </div>
-          <Link href="/fiction" className="text-sm font-medium text-primary hover:underline">
-            View All →
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {fictionBooks.map((book) => (
-            <Link key={book.id} href={`/books/${book.id}`} className="group">
-              <div className="aspect-[3/4] relative overflow-hidden rounded-lg mb-3">
-                <Image
-                  src={book.coverImage}
-                  alt={book.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-200"
-                />
-              </div>
-              <h3 className="line-clamp-1 font-medium group-hover:text-primary">{book.title}</h3>
-              <p className="text-sm text-muted-foreground">by {book.author}</p>
-              <BookRating rating={book.rating} reviewCount={book.reviewCount} size="sm" />
-            </Link>
-          ))}
-        </div>
-      </section>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-6">
+            {featuredBooks.map((book) => (
+              <Card key={book.id} className="group hover:shadow-lg transition-shadow">
+                <div className="relative">
+                  <Link href={book.link}>
+                    <div className="aspect-[3/4] relative overflow-hidden">
+                      <Image
+                        src={book.coverImage}
+                        alt={book.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  </Link>
+                  
+                  {/* Badge */}
+                  <Badge className="absolute top-1 left-1 sm:top-2 sm:left-2 bg-primary text-primary-foreground text-xs">
+                    {book.badge}
+                  </Badge>
 
-      {/* Audiobooks Section */}
-      <section className="container mx-auto px-4 py-12">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-2xl font-bold">Audiobooks</h2>
-            <p className="text-muted-foreground">Listen to your favorite stories</p>
-          </div>
-          <Link href="/audiobooks" className="text-sm font-medium text-primary hover:underline">
-            View All →
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {audiobooks.map((book) => (
-            <Link key={book.id} href={`/books/${book.id}`} className="group">
-              <div className="aspect-[3/4] relative overflow-hidden rounded-lg mb-3">
-                <Image
-                  src={book.coverImage}
-                  alt={book.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-200"
-                />
-              </div>
-              <h3 className="line-clamp-1 font-medium group-hover:text-primary">{book.title}</h3>
-              <p className="text-sm text-muted-foreground">by {book.author}</p>
-              <BookRating rating={book.rating} reviewCount={book.reviewCount} size="sm" />
-            </Link>
-          ))}
-        </div>
-      </section>
+                  {/* Stock Status */}
+                  <Badge 
+                    className={`absolute top-1 right-1 sm:top-2 sm:right-2 text-xs ${
+                      book.inStock 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-red-500 text-white'
+                    }`}
+                  >
+                    {book.inStock ? 'In Stock' : 'Out of Stock'}
+                  </Badge>
 
-      {/* Nonfiction Section */}
-      <section className="container mx-auto px-4 py-12">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-2xl font-bold">Nonfiction</h2>
-            <p className="text-muted-foreground">Expand your knowledge and understanding</p>
-          </div>
-          <Link href="/nonfiction" className="text-sm font-medium text-primary hover:underline">
-            View All →
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {nonfictionBooks.map((book) => (
-            <Link key={book.id} href={`/books/${book.id}`} className="group">
-              <div className="aspect-[3/4] relative overflow-hidden rounded-lg mb-3">
-                <Image
-                  src={book.coverImage}
-                  alt={book.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-200"
-                />
-              </div>
-              <h3 className="line-clamp-1 font-medium group-hover:text-primary">{book.title}</h3>
-              <p className="text-sm text-muted-foreground">by {book.author}</p>
-              <BookRating rating={book.rating} reviewCount={book.reviewCount} size="sm" />
-            </Link>
-          ))}
-        </div>
-      </section>
+                  {/* Action Buttons */}
+                  <div className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => handleAddToCart(book.id)}
+                      disabled={!book.inStock}
+                      className="h-6 w-6 sm:h-8 sm:w-8 p-0"
+                    >
+                      <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => handleToggleWishlist(book.id)}
+                      className={`h-6 w-6 sm:h-8 sm:w-8 p-0 ${
+                        wishlist.includes(book.id) 
+                          ? 'text-red-500 hover:text-red-600' 
+                          : 'hover:text-red-500'
+                      }`}
+                    >
+                      <Heart 
+                        className="h-3 w-3 sm:h-4 sm:w-4" 
+                        fill={wishlist.includes(book.id) ? "currentColor" : "none"}
+                      />
+                    </Button>
+                  </div>
+                </div>
 
-      {/* Nature Section */}
-      <section className="container mx-auto px-4 py-12">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-2xl font-bold">Nature & Environment</h2>
-            <p className="text-muted-foreground">Connect with the natural world</p>
+                <CardContent className="p-2 sm:p-4">
+                  <Link href={book.link}>
+                    <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 text-xs sm:text-sm">
+                      {book.title}
+                    </h3>
+                  </Link>
+                  <p className="text-xs sm:text-sm text-muted-foreground mb-2">{book.author}</p>
+                  
+                  <div className="flex items-center justify-between mb-2 sm:mb-3">
+                    <BookRating rating={book.rating} reviewCount={book.reviewCount} />
+                    <div className="text-right min-w-0 flex-shrink-0">
+                      <div className="flex flex-col items-end">
+                        <span className="font-semibold text-foreground text-xs sm:text-sm">${book.price}</span>
+                        {book.originalPrice > book.price && (
+                          <span className="text-xs text-muted-foreground line-through">
+                            ${book.originalPrice}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-1 sm:gap-2">
+                    <Button
+                      onClick={() => handleAddToCart(book.id)}
+                      disabled={!book.inStock}
+                      className="flex-1 text-xs"
+                      size="sm"
+                    >
+                      <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                      Add to Cart
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleToggleWishlist(book.id)}
+                      className="h-8 w-8 sm:h-9 sm:w-9 p-0"
+                    >
+                      <Heart 
+                        className="h-3 w-3 sm:h-4 sm:w-4" 
+                        fill={wishlist.includes(book.id) ? "currentColor" : "none"}
+                      />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-          <Link href="/nature" className="text-sm font-medium text-primary hover:underline">
-            View All →
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {natureBooks.map((book) => (
-            <Link key={book.id} href={`/books/${book.id}`} className="group">
-              <div className="aspect-[3/4] relative overflow-hidden rounded-lg mb-3">
-                <Image
-                  src={book.coverImage}
-                  alt={book.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-200"
-                />
-              </div>
-              <h3 className="line-clamp-1 font-medium group-hover:text-primary">{book.title}</h3>
-              <p className="text-sm text-muted-foreground">by {book.author}</p>
-              <BookRating rating={book.rating} reviewCount={book.reviewCount} size="sm" />
-            </Link>
-          ))}
         </div>
       </section>
 
       {/* Categories Section */}
-      <section className="container mx-auto px-4 py-12">
-        <h2 className="text-2xl font-bold mb-8">Browse by Category</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {categories.map((category) => (
-            <Link key={category.name} href={`/categories/${category.name.toLowerCase()}`} className="group">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                <CategoryIcon name={category.icon} className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="font-semibold mt-2">{category.name}</h3>
-              <p className="text-sm text-muted-foreground">{category.count} books</p>
-            </Link>
-          ))}
+      <section className="py-8 sm:py-16 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">Browse by Category</h2>
+            <p className="text-muted-foreground text-sm sm:text-base">Find your next favorite book in our curated categories</p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-6">
+            {categories.map((category, index) => (
+              <Link key={index} href={category.link}>
+                <Card className="text-center hover:shadow-lg transition-shadow cursor-pointer group">
+                  <CardContent className="p-3 sm:p-6">
+                    <div className={`w-8 h-8 sm:w-12 sm:h-12 rounded-full ${category.color} flex items-center justify-center mx-auto mb-2 sm:mb-4 group-hover:scale-110 transition-transform`}>
+                      <category.icon className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+                    </div>
+                    <h3 className="font-semibold text-foreground mb-1 text-xs sm:text-sm">{category.name}</h3>
+                    <p className="text-xs text-muted-foreground">{category.count} books</p>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Staff Picks Section */}
-      <section className="container mx-auto px-4 py-8 bg-muted rounded-lg my-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-2xl font-bold text-foreground">Staff Picks</h2>
-            <p className="text-muted-foreground">Recommended by our bookworms</p>
-          </div>
-          <Link href="/staff-picks" className="text-sm font-medium text-primary hover:underline">
-            View All →
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {staffFavorites.slice(0, 6).map((book) => (
-            <Link key={book.id} href={book.link} className="group">
-              <div className="aspect-[3/4] relative overflow-hidden rounded-lg mb-3">
-                <Image
-                  src={book.coverImage}
-                  alt={book.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-200"
-                />
-              </div>
-              <h3 className="line-clamp-1 font-medium group-hover:text-primary">{book.title}</h3>
-              <p className="text-sm text-muted-foreground">by {book.author}</p>
-              <BookRating rating={book.rating} reviewCount={book.reviewCount} size="sm" />
-              <p className="text-xs font-semibold text-primary">Picked by {book.author}</p>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* Coming Soon Section */}
-      <section className="container mx-auto px-4 py-12">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-2xl font-bold">Coming Soon</h2>
-            <p className="text-muted-foreground">Pre-order these upcoming releases</p>
-          </div>
-          <Link href="/coming-soon" className="text-sm font-medium text-primary hover:underline">
-            View All →
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {comingSoonBooks.map((book) => (
-            <Link key={book.id} href={`/books/${book.id}`} className="group">
-              <div className="aspect-[3/4] relative overflow-hidden rounded-lg mb-3">
-                <Image
-                  src={book.coverImage}
-                  alt={book.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-200"
-                />
-                <div className="bg-primary py-1 px-2 text-center text-xs font-medium text-primary-foreground absolute top-2 left-2">
-                  Pre-order
+      {/* Stats Section */}
+      <section className="py-8 sm:py-16 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8">
+            {stats.map((stat, index) => (
+              <div key={index} className="text-center">
+                <div className="w-8 h-8 sm:w-12 sm:h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-4">
+                  <stat.icon className="h-4 w-4 sm:h-6 sm:w-6 text-primary" />
                 </div>
+                <h3 className="text-lg sm:text-2xl font-bold text-foreground mb-1 sm:mb-2">{stat.value}</h3>
+                <p className="text-muted-foreground text-xs sm:text-sm">{stat.label}</p>
               </div>
-              <h3 className="line-clamp-1 font-medium group-hover:text-primary">{book.title}</h3>
-              <p className="text-sm text-muted-foreground">by {book.author}</p>
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="mt-2 w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-              >
-                Pre-order now
-              </Button>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* Book Club Section */}
-      <section className="container mx-auto px-4 py-12">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-2xl font-bold">Book Club Picks</h2>
-            <p className="text-muted-foreground">Perfect for your next discussion</p>
+            ))}
           </div>
-          <Link href="/book-club" className="text-sm font-medium text-primary hover:underline">
-            View All →
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {bookClubBooks.map((book) => (
-            <Link key={book.id} href={`/books/${book.id}`} className="group">
-              <div className="aspect-[3/4] relative overflow-hidden rounded-lg mb-3">
-                <Image
-                  src={book.coverImage}
-                  alt={book.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-200"
-                />
-              </div>
-              <h3 className="line-clamp-1 font-medium group-hover:text-primary">{book.title}</h3>
-              <p className="text-sm text-muted-foreground">by {book.author}</p>
-              <BookRating rating={book.rating} reviewCount={book.reviewCount} size="sm" />
-            </Link>
-          ))}
         </div>
       </section>
 
       {/* Newsletter Section */}
-      <NewsletterSignup />
-
-      {/* CTA Section */}
-      <section className="container mx-auto px-4 py-12 text-center">
-        <h2 className="text-3xl font-bold mb-4">Ready to Start Reading?</h2>
-        <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-          Join thousands of readers who discover their next favorite book at BookHaven. 
-          Start exploring our collection today.
-        </p>
-        <Button className="mt-4 bg-primary hover:bg-primary/90">Learn More</Button>
+      <section className="py-8 sm:py-16 bg-primary text-primary-foreground">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-4">Stay Updated</h2>
+          <p className="text-primary-foreground/80 mb-4 sm:mb-8 max-w-2xl mx-auto text-sm sm:text-base">
+            Get notified about new releases, exclusive deals, and reading recommendations.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-md mx-auto">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="flex-1 px-3 sm:px-4 py-2 rounded-md text-foreground text-sm sm:text-base"
+            />
+            <Button variant="secondary" className="bg-card text-primary hover:bg-card/90 text-sm sm:text-base">
+              Subscribe
+            </Button>
+          </div>
+        </div>
       </section>
-    </AppShell>
+    </div>
   )
 }

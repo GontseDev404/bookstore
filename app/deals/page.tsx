@@ -1,6 +1,5 @@
 import Image from "next/image"
 import Link from "next/link"
-import { AppShell } from "@/components/layout/app-shell"
 import { BookRating } from "@/components/book/book-rating"
 import { Badge } from "@/components/ui/badge"
 
@@ -14,9 +13,9 @@ export default function DealsPage() {
       coverImage: "/images/silver-feet-cover.png",
       rating: 4.8,
       reviewCount: 37,
-      originalPrice: 24.99,
-      salePrice: 19.99,
-      discount: 20,
+      originalPrice: 29.99,
+      salePrice: 24.99,
+      discount: 17,
       link: "/books/silver-feet-and-her-wonder",
     },
     {
@@ -26,9 +25,9 @@ export default function DealsPage() {
       coverImage: "/images/fearless-cover.webp",
       rating: 4.9,
       reviewCount: 41,
-      originalPrice: 29.99,
+      originalPrice: 27.99,
       salePrice: 22.99,
-      discount: 23,
+      discount: 18,
       link: "/books/fearless",
     },
     {
@@ -38,9 +37,9 @@ export default function DealsPage() {
       coverImage: "/images/great-big-beautiful-life-cover.webp",
       rating: 4.5,
       reviewCount: 33,
-      originalPrice: 26.99,
+      originalPrice: 23.99,
       salePrice: 18.99,
-      discount: 30,
+      discount: 21,
       link: "/books/great-big-beautiful-life",
     },
     {
@@ -50,9 +49,9 @@ export default function DealsPage() {
       coverImage: "/images/the-tenant-cover.webp",
       rating: 4.8,
       reviewCount: 39,
-      originalPrice: 27.99,
+      originalPrice: 26.99,
       salePrice: 21.99,
-      discount: 21,
+      discount: 19,
       link: "/books/the-tenant",
     },
     {
@@ -63,8 +62,8 @@ export default function DealsPage() {
       rating: 4.6,
       reviewCount: 35,
       originalPrice: 25.99,
-      salePrice: 16.99,
-      discount: 35,
+      salePrice: 20.99,
+      discount: 19,
       link: "/books/remarkably-bright-creatures",
     },
     {
@@ -106,46 +105,49 @@ export default function DealsPage() {
   ]
 
   return (
-    <AppShell>
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Special Deals</h1>
-          <p className="text-gray-600">Limited-time offers on your favorite books</p>
-        </div>
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-foreground mb-2">Special Deals</h1>
+        <p className="text-muted-foreground">Limited-time offers on your favorite books</p>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {deals.map((book) => (
-            <div key={book.id} className="group">
-              <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow relative">
-                <Badge className="absolute top-2 right-2 bg-red-500 text-white">
-                  -{book.discount}%
-                </Badge>
-                <div className="aspect-[3/4] relative overflow-hidden">
-                  <Link href={book.link} className="absolute inset-0">
-                    <Image
-                      src={book.coverImage}
-                      alt={book.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </Link>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors">
-                    {book.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-2">{book.author}</p>
-                  <BookRating rating={book.rating} reviewCount={book.reviewCount} />
-                  <div className="mt-2 flex items-center gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {deals.map((book) => (
+          <div key={book.id} className="group">
+            <div className="bg-card rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow relative">
+              <Badge className="absolute top-2 right-2 bg-red-500 text-white">
+                -{book.discount}%
+              </Badge>
+              <div className="aspect-[3/4] relative overflow-hidden">
+                <Link href={book.link} className="absolute inset-0">
+                  <Image
+                    src={book.coverImage}
+                    alt={book.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </Link>
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                  {book.title}
+                </h3>
+                <p className="text-sm text-muted-foreground mb-2">{book.author}</p>
+                <BookRating rating={book.rating} reviewCount={book.reviewCount} />
+                <div className="mt-3 flex flex-col">
+                  <div className="flex items-center gap-2">
                     <span className="text-lg font-bold text-red-600">${book.salePrice}</span>
-                    <span className="text-sm text-gray-500 line-through">${book.originalPrice}</span>
+                    <span className="text-sm text-muted-foreground line-through">${book.originalPrice}</span>
                   </div>
+                  <span className="text-xs text-muted-foreground mt-1">
+                    Save ${(book.originalPrice - book.salePrice).toFixed(2)}
+                  </span>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
-    </AppShell>
+    </div>
   )
 } 
