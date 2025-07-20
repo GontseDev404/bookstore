@@ -11,15 +11,14 @@ const nextConfig = {
   },
   // Enable standalone output for Docker optimization
   output: 'standalone',
-  // Experimental features for better performance
-  experimental: {
-    // Enable server components
-    serverComponentsExternalPackages: [],
-  },
+  // Server external packages configuration
+  serverExternalPackages: [],
   // Optimize for production
-  swcMinify: true,
-  // Compress static assets
   compress: true,
+  // Enable experimental features
+  experimental: {
+    // Add any experimental features here if needed
+  },
 }
 
 export default nextConfig

@@ -468,11 +468,11 @@ export default function HomePage() {
                   
                   <div className="flex items-center justify-between mb-2 sm:mb-3">
                     <BookRating rating={book.rating} reviewCount={book.reviewCount} />
-                    <div className="text-right min-w-0 flex-shrink-0">
+                    <div className="text-right min-w-0 flex-shrink-0 ml-2">
                       <div className="flex flex-col items-end">
-                        <span className="font-semibold text-foreground text-xs sm:text-sm">${book.price}</span>
+                        <span className="font-semibold text-foreground text-xs sm:text-sm truncate">${book.price}</span>
                         {book.originalPrice > book.price && (
-                          <span className="text-xs text-muted-foreground line-through">
+                          <span className="text-xs text-muted-foreground line-through truncate">
                             ${book.originalPrice}
                           </span>
                         )}

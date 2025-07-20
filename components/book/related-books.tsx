@@ -52,9 +52,9 @@ export function RelatedBooks({ title, books }: RelatedBooksProps) {
                 <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors">
                   {book.title}
                 </h3>
-                <p className="text-sm text-muted-foreground">by {book.author}</p>
+                <p className="text-sm text-muted-foreground truncate">by {book.author}</p>
                 <BookRating rating={book.rating} reviewCount={book.reviewCount} size="sm" />
-                <p className="text-sm font-semibold text-primary">${book.price}</p>
+                <p className="text-sm font-semibold text-primary truncate">${book.price}</p>
               </div>
             </div>
           </Link>

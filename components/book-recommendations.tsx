@@ -7,6 +7,7 @@ import { BookRating } from "@/components/book/book-rating"
 import { Button } from "@/components/ui/button"
 import { Heart, ShoppingCart } from "lucide-react"
 import { WishlistCartContext } from "@/components/wishlist-cart-context"
+import { getAllBooks } from "@/lib/book-data"
 
 interface Book {
   id: string
@@ -23,145 +24,30 @@ interface Book {
 interface BookRecommendationsProps {
   title?: string
   maxItems?: number
+  excludeBooks?: string[] // Array of book IDs to exclude from recommendations
 }
 
-// Sample book database with categories and tags for recommendations
-const allBooks: Book[] = [
-  {
-    id: "silver-feet-and-her-wonder",
-    title: "Silver Feet and Her Wonder",
-    author: "Nana Ndlovana-Mthimkhulu",
-    coverImage: "/images/silver-feet-cover.png",
-    rating: 4.8,
-    reviewCount: 37,
-    price: 24.99,
-    category: "children",
-    tags: ["children", "adventure", "family", "african"]
-  },
-  {
-    id: "the-monkey-blanket",
-    title: "The Monkey Blanket",
-    author: "Nana Ndlovana-Mthimkhulu",
-    coverImage: "/images/the-monkey-blanket-cover.png",
-    rating: 4.9,
-    reviewCount: 45,
-    price: 22.99,
-    category: "children",
-    tags: ["children", "adventure", "family", "african"]
-  },
-  {
-    id: "fearless",
-    title: "Fearless",
-    author: "Lauren Roberts",
-    coverImage: "/images/fearless-cover.webp",
-    rating: 4.9,
-    reviewCount: 41,
-    price: 29.99,
-    category: "romance",
-    tags: ["romance", "fantasy", "young-adult", "adventure"]
-  },
-  {
-    id: "great-big-beautiful-life",
-    title: "Great Big Beautiful Life",
-    author: "Emily Henry",
-    coverImage: "/images/great-big-beautiful-life-cover.webp",
-    rating: 4.5,
-    reviewCount: 33,
-    price: 26.99,
-    category: "romance",
-    tags: ["romance", "contemporary", "women-fiction", "humor"]
-  },
-  {
-    id: "the-tenant",
-    title: "The Tenant",
-    author: "Freida McFadden",
-    coverImage: "/images/the-tenant-cover.webp",
-    rating: 4.8,
-    reviewCount: 39,
-    price: 27.99,
-    category: "mystery",
-    tags: ["mystery", "thriller", "suspense", "psychological"]
-  },
-  {
-    id: "remarkably-bright-creatures",
-    title: "Remarkably Bright Creatures",
-    author: "Shelby Van Pelt",
-    coverImage: "/images/remarkably-bright-creatures-cover.webp",
-    rating: 4.6,
-    reviewCount: 35,
-    price: 25.99,
-    category: "fiction",
-    tags: ["fiction", "literary", "family", "emotional"]
-  },
-  {
-    id: "emperor-of-gladness",
-    title: "The Emperor of Gladness",
-    author: "Ocean Vuong",
-    coverImage: "/images/the-emperor-of-gladness-cover.webp",
-    rating: 4.9,
-    reviewCount: 42,
-    price: 28.99,
-    category: "fiction",
-    tags: ["fiction", "literary", "poetry", "asian-american"]
-  },
-  {
-    id: "run-for-the-hills",
-    title: "Run for the Hills",
-    author: "Kevin Wilson",
-    coverImage: "/images/run-for-the-hills-cover.webp",
-    rating: 4.7,
-    reviewCount: 36,
-    price: 24.99,
-    category: "fiction",
-    tags: ["fiction", "humor", "family", "contemporary"]
-  },
-  {
-    id: "speak-to-me-of-home",
-    title: "Speak to Me of Home",
-    author: "Jeanine Cummins",
-    coverImage: "/images/speak-to-me-of-home-cover.webp",
-    rating: 4.6,
-    reviewCount: 31,
-    price: 26.99,
-    category: "fiction",
-    tags: ["fiction", "immigration", "family", "drama"]
-  },
-  {
-    id: "sleep",
-    title: "Sleep: A Novel",
-    author: "Honor Jones",
-    coverImage: "/images/sleep-cover.webp",
-    rating: 4.4,
-    reviewCount: 28,
-    price: 23.99,
-    category: "fiction",
-    tags: ["fiction", "literary", "contemporary", "family"]
-  },
-  {
-    id: "marble-hall-murders",
-    title: "Marble Hall Murders",
-    author: "Anthony Horowitz",
-    coverImage: "/images/marble-hall-murders-cover.webp",
-    rating: 4.8,
-    reviewCount: 39,
-    price: 27.99,
-    category: "mystery",
-    tags: ["mystery", "detective", "british", "historical"]
-  },
-  {
-    id: "big-dumb-eyes",
-    title: "Big Dumb Eyes: Stories from a Comedian",
-    author: "Nate Bargatze",
-    coverImage: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/lf%20%286%29-RTR1mIiouECBNXhGHvnA1jkty7ROcf.webp",
-    rating: 4.5,
-    reviewCount: 32,
-    price: 24.99,
-    category: "humor",
-    tags: ["humor", "comedy", "memoir", "stand-up"]
-  }
-]
+// Get all books from centralized data source
+const allBooksData = getAllBooks()
 
-export function BookRecommendations({ title = "You might also like", maxItems = 6 }: BookRecommendationsProps) {
+// Transform centralized data to match the expected format
+const allBooks: Book[] = allBooksData.map(book => ({
+  id: book.id,
+  title: book.title,
+  author: book.author,
+  coverImage: book.coverImage,
+  rating: book.rating,
+  reviewCount: book.reviewCount,
+  price: book.formats[0]?.price || 0,
+  category: "fiction", // Default category
+  tags: ["fiction", "literary"] // Default tags
+}))
+
+export function BookRecommendations({ 
+  title = "You might also like", 
+  maxItems = 6,
+  excludeBooks = []
+}: BookRecommendationsProps) {
   const { wishlist, toggleWishlist, cart, addToCart, removeFromCart } = useContext(WishlistCartContext)
 
   // Get user's current interests from cart and wishlist
@@ -170,9 +56,12 @@ export function BookRecommendations({ title = "You might also like", maxItems = 
 
   // Generate recommendations based on user's interests
   const getRecommendations = (): Book[] => {
+    // Filter out books that should be excluded (e.g., already shown in main list)
+    const availableBooks = allBooks.filter(book => !excludeBooks.includes(book.id))
+    
     if (userBookData.length === 0) {
-      // If no user data, return popular books
-      return allBooks
+      // If no user data, return popular books (excluding already shown books)
+      return availableBooks
         .sort((a, b) => b.rating - a.rating)
         .slice(0, maxItems)
     }
@@ -182,7 +71,7 @@ export function BookRecommendations({ title = "You might also like", maxItems = 
     const userTags = new Set(userBookData.flatMap(book => book.tags))
 
     // Score books based on user's interests
-    const scoredBooks = allBooks
+    const scoredBooks = availableBooks
       .filter(book => !userBooks.includes(book.id)) // Exclude already owned books
       .map(book => {
         let score = 0

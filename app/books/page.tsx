@@ -2,9 +2,8 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { AppShell } from "@/components/layout/app-shell"
 import { BookRating } from "@/components/book/book-rating"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useState, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { SearchContext } from "@/components/search-context"
 import { WishlistCartContext } from "@/components/wishlist-cart-context"
@@ -17,91 +16,29 @@ import { SearchSuggestions } from "@/components/search-suggestions"
 import { SearchResults } from "@/components/search-results"
 import { BookRecommendations } from "@/components/book-recommendations"
 import { RecentlyViewed } from "@/components/recently-viewed"
+import { getAllBooks } from "@/lib/book-data"
 
-const books = [
-  {
-    id: "silver-feet-and-her-wonder",
-    title: "Silver Feet and Her Wonder",
-    author: "Nana Ndlovana-Mthimkhulu",
-    coverImage: "/images/silver-feet-cover.png",
-    rating: 4.8,
-    reviewCount: 37,
-    price: 24.99,
-    originalPrice: 29.99,
-    inStock: true,
-    category: "children",
-    badge: "Bestseller"
-  },
-  {
-    id: "the-monkey-blanket",
-    title: "The Monkey Blanket",
-    author: "Nana Ndlovana-Mthimkhulu",
-    coverImage: "/images/the-monkey-blanket-cover.png",
-    rating: 4.9,
-    reviewCount: 45,
-    price: 19.99,
-    originalPrice: 24.99,
-    inStock: true,
-    category: "children",
-    badge: "New Release"
-  },
-  {
-    id: "fearless",
-    title: "Fearless",
-    author: "Lauren Roberts",
-    coverImage: "/images/fearless-cover.webp",
-    rating: 4.9,
-    reviewCount: 41,
-    price: 22.99,
-    originalPrice: 27.99,
-    inStock: false,
-    category: "romance",
-    badge: "Popular"
-  },
-  {
-    id: "great-big-beautiful-life",
-    title: "Great Big Beautiful Life",
-    author: "Emily Henry",
-    coverImage: "/images/great-big-beautiful-life-cover.webp",
-    rating: 4.5,
-    reviewCount: 33,
-    price: 18.99,
-    originalPrice: 23.99,
-    inStock: true,
-    category: "romance",
-    badge: "Staff Pick"
-  },
-  {
-    id: "the-tenant",
-    title: "The Tenant",
-    author: "Freida McFadden",
-    coverImage: "/images/the-tenant-cover.webp",
-    rating: 4.8,
-    reviewCount: 39,
-    price: 21.99,
-    originalPrice: 26.99,
-    inStock: true,
-    category: "mystery",
-    badge: "Thriller"
-  },
-  {
-    id: "remarkably-bright-creatures",
-    title: "Remarkably Bright Creatures",
-    author: "Shelby Van Pelt",
-    coverImage: "/images/remarkably-bright-creatures-cover.webp",
-    rating: 4.6,
-    reviewCount: 35,
-    price: 20.99,
-    originalPrice: 25.99,
-    inStock: true,
-    category: "fiction",
-    badge: "Award Winner"
-  },
-]
+// Get all books from centralized data source
+const allBooks = getAllBooks()
+
+// Transform the centralized book data to match the expected format
+const books = allBooks.map(book => ({
+  id: book.id,
+  title: book.title,
+  author: book.author,
+  coverImage: book.coverImage,
+  rating: book.rating,
+  reviewCount: book.reviewCount,
+  price: book.formats[0]?.price || 0, // Use first format's price as default
+  originalPrice: book.formats[0]?.originalPrice,
+  inStock: true,
+  category: "fiction", // Default category since centralized data doesn't have categories
+  badge: "Featured"
+}))
 
 const categories = ["all", "children", "romance", "mystery", "fiction"]
 
-export default function BooksPage() {
+function BooksPageContent() {
   const [mounted, setMounted] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -331,29 +268,20 @@ export default function BooksPage() {
                 </Button>
               </div>
               <div className="p-4">
-                <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-2">
                   {book.title}
                 </h3>
                 <p className="text-sm text-muted-foreground mb-2">{book.author}</p>
                 <BookRating rating={book.rating} reviewCount={book.reviewCount} />
                 <div className="mt-3 flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span className="font-semibold text-foreground text-sm">${book.price}</span>
-                    {book.originalPrice > book.price && (
-                      <span className="text-xs text-muted-foreground line-through">
+                  <div className="flex flex-col min-w-0 flex-1">
+                    <span className="font-semibold text-foreground text-sm truncate">${book.price}</span>
+                    {book.originalPrice && book.originalPrice > book.price && (
+                      <span className="text-xs text-muted-foreground line-through truncate">
                         ${book.originalPrice}
                       </span>
                     )}
                   </div>
-                  <Button
-                    variant={wishlist.includes(book.id) ? "default" : "outline"}
-                    size="icon"
-                    onClick={() => toggleWishlist(book.id)}
-                    aria-label="Add to wishlist"
-                    className="h-8 w-8"
-                  >
-                    <Heart fill={wishlist.includes(book.id) ? "#e11d48" : "none"} className="h-4 w-4 text-pink-600" />
-                  </Button>
                 </div>
                 <div className="mt-3">
                   <Button
@@ -399,7 +327,15 @@ export default function BooksPage() {
       <RecentlyViewed />
 
       {/* Book Recommendations */}
-      <BookRecommendations />
+      <BookRecommendations excludeBooks={sortedBooks.map(book => book.id)} />
     </div>
+  )
+}
+
+export default function BooksPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <BooksPageContent />
+    </Suspense>
   )
 }

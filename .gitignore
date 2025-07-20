@@ -188,4 +188,38 @@ config.local.json
 # SvelteKit
 .svelte-kit
 
+# Additional entries for your project
+# Local development files
+.env.example
+.env.local.example
+
+# IDE specific files
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
+
+# OS specific files
+*.orig
+*.rej
+
+# Temporary files
+*.tmp
+*.temp
+
+# Lock files (keep package-lock.json but ignore others if needed)
+# yarn.lock (uncomment if you want to ignore yarn lock)
+# pnpm-lock.yaml (uncomment if you want to ignore pnpm lock)
+
+# Local development server files
+.next/server/chunks/
+.next/server/pages/
+
+# Storybook
+storybook-static/
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
 # End of https://www.toptal.com/developers/gitignore/api/node,nextjs
