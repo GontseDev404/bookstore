@@ -363,7 +363,7 @@ export default function HomePage() {
                         <Button 
                           variant="outline" 
                           size="lg"
-                          className="border-white text-white hover:bg-white hover:text-amber-900 font-semibold transform hover:scale-105 transition-all duration-300 text-sm sm:text-base"
+                          className="bg-white text-amber-900 hover:bg-white/90 font-semibold transform hover:scale-105 transition-all duration-300 text-sm sm:text-base shadow-lg hover:shadow-xl border-white"
                           onClick={() => handleToggleWishlist(slide.id.toString())}
                         >
                           <Heart 

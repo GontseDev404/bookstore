@@ -187,7 +187,7 @@ export function EnhancedSidebar() {
           <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-80 p-0 bg-background">
+      <SheetContent side="left" className="w-80 p-0 bg-background h-screen">
         <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
         <SheetDescription className="sr-only">Access the main navigation menu for BookHaven</SheetDescription>
         
@@ -203,14 +203,6 @@ export function EnhancedSidebar() {
             />
             <span className="text-lg font-bold text-card-foreground">BookHaven</span>
           </Link>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsOpen(false)}
-            className="sidebar-close h-8 w-8"
-          >
-            <X className="h-4 w-4" />
-          </Button>
         </div>
 
         {/* Search Bar */}
@@ -226,7 +218,7 @@ export function EnhancedSidebar() {
         </div>
 
         {/* Navigation Content */}
-        <div className="sidebar-content flex-1 overflow-y-auto p-4 space-y-6">
+        <div className="sidebar-content flex-1 h-full overflow-y-auto p-4 space-y-6">
           {/* Main Navigation */}
           <SidebarSection title="Browse" items={mainNavItems} />
           

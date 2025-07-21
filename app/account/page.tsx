@@ -1,24 +1,78 @@
 "use client"
 
-import { useState } from "react"
-import { User, Mail, Phone, MapPin, CreditCard, Shield, Bell, Key, Trash2, ArrowLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import Link from "next/link"
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
+import { User, Mail, Phone, MapPin, CreditCard, Shield, Bell, Key, Trash2, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
 
 export default function AccountPage() {
-  const [userProfile, setUserProfile] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@example.com",
-    phone: "+1 (555) 123-4567",
-    address: "123 Main St, City, State 12345"
-  })
+  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<any>({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    address: ""
+  });
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUserAndProfile = async () => {
+      const { data: authData } = await supabase.auth.getUser();
+      const user = authData?.user;
+      setUser(user);
+      setEmail(user?.email || "");
+      if (user) {
+        // Fetch profile from 'profiles' table
+        const { data: profileData } = await supabase
+          .from("profiles")
+          .select("first_name, last_name, phone, address")
+          .eq("id", user.id)
+          .single();
+        if (profileData) {
+          setProfile({
+            firstName: profileData.first_name || "",
+            lastName: profileData.last_name || "",
+            phone: profileData.phone || "",
+            address: profileData.address || ""
+          });
+        }
+      }
+    };
+    fetchUserAndProfile();
+  }, []);
+
+  const handleProfileUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setSuccess(null);
+    setError(null);
+    if (!user) {
+      setError("Not logged in");
+      setLoading(false);
+      return;
+    }
+    // Upsert profile
+    const { error } = await supabase.from("profiles").upsert({
+      id: user.id,
+      first_name: profile.firstName,
+      last_name: profile.lastName,
+      phone: profile.phone,
+      address: profile.address
+    });
+    if (error) setError(error.message);
+    else setSuccess("Profile updated successfully!");
+    setLoading(false);
+  };
 
   const [orders] = useState([
     {
@@ -43,11 +97,6 @@ export default function AccountPage() {
       items: ["The Catcher in the Rye"]
     }
   ])
-
-  const handleProfileUpdate = (e: React.FormEvent) => {
-    e.preventDefault()
-    alert("Profile updated successfully!")
-  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -102,51 +151,49 @@ export default function AccountPage() {
                     <Label htmlFor="firstName">First Name</Label>
                     <Input
                       id="firstName"
-                      value={userProfile.firstName}
-                      onChange={(e) => setUserProfile(prev => ({ ...prev, firstName: e.target.value }))}
+                      value={profile.firstName}
+                      onChange={(e) => setProfile((prev: any) => ({ ...prev, firstName: e.target.value }))}
                     />
                   </div>
                   <div>
                     <Label htmlFor="lastName">Last Name</Label>
                     <Input
                       id="lastName"
-                      value={userProfile.lastName}
-                      onChange={(e) => setUserProfile(prev => ({ ...prev, lastName: e.target.value }))}
+                      value={profile.lastName}
+                      onChange={(e) => setProfile((prev: any) => ({ ...prev, lastName: e.target.value }))}
                     />
                   </div>
                 </div>
-                
                 <div>
                   <Label htmlFor="email">Email Address</Label>
                   <Input
                     id="email"
                     type="email"
-                    value={userProfile.email}
-                    onChange={(e) => setUserProfile(prev => ({ ...prev, email: e.target.value }))}
+                    value={email}
+                    disabled
                   />
                 </div>
-
                 <div>
                   <Label htmlFor="phone">Phone Number</Label>
                   <Input
                     id="phone"
-                    value={userProfile.phone}
-                    onChange={(e) => setUserProfile(prev => ({ ...prev, phone: e.target.value }))}
+                    value={profile.phone}
+                    onChange={(e) => setProfile((prev: any) => ({ ...prev, phone: e.target.value }))}
                   />
                 </div>
-
                 <div>
                   <Label htmlFor="address">Address</Label>
                   <Input
                     id="address"
-                    value={userProfile.address}
-                    onChange={(e) => setUserProfile(prev => ({ ...prev, address: e.target.value }))}
+                    value={profile.address}
+                    onChange={(e) => setProfile((prev: any) => ({ ...prev, address: e.target.value }))}
                   />
                 </div>
-
-                <Button type="submit" className="bg-primary hover:bg-primary/90">
-                  Update Profile
+                <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={loading}>
+                  {loading ? "Saving..." : "Update Profile"}
                 </Button>
+                {success && <p className="text-green-600 mt-2">{success}</p>}
+                {error && <p className="text-red-600 mt-2">{error}</p>}
               </form>
             </CardContent>
           </Card>
