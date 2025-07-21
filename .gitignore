@@ -144,6 +144,12 @@ build/
 claude.md
 ai-assistant.md
 
+# Markdown files (ignore most MD files, keep essential ones)
+*.md
+!README.md
+!INSTRUCTOR_ACCESS.md
+!VERIFICATION_GUIDE.md
+
 # Database
 *.db
 *.sqlite
