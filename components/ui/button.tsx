@@ -33,24 +33,38 @@ const buttonVariants = cva(
   }
 )
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
-  asChild?: boolean
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+  'aria-label'?: string;
+  'data-track-add-to-cart'?: string;
+}
+
+function trackAddToCart(productId: string) {
+  if (typeof window !== 'undefined' && (window as any).gtag) {
+    (window as any).gtag('event', 'add_to_cart', {
+      product_id: productId,
+    });
+  }
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button"
+  ({ className, variant, size, asChild = false, 'aria-label': ariaLabel, onClick, 'data-track-add-to-cart': trackId, ...props }, ref) => {
+    const Comp = asChild ? Slot : 'button';
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      if (trackId) trackAddToCart(trackId);
+      if (onClick) onClick(e);
+    };
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
+        aria-label={ariaLabel}
+        role="button"
+        onClick={handleClick}
         {...props}
       />
-    )
+    );
   }
-)
-Button.displayName = "Button"
-
-export { Button, buttonVariants }
+);
+Button.displayName = 'Button';
+export { Button };

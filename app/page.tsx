@@ -254,6 +254,12 @@ export default function HomePage() {
     toggleWishlist(bookId)
   }
 
+  const mockBooks = [
+    { id: "silver-feet-and-her-wonder", title: "Silver Feet and Her Wonder", author: "Nana Ndlovana-Mthimkhulu", coverImage: "/images/silver-feet-cover.png", rating: 4.8, reviewCount: 37, price: 24.99, originalPrice: 29.99, stock: 10, link: "/books/silver-feet-and-her-wonder", badge: "NEW" },
+    { id: "the-monkey-blanket", title: "The Monkey Blanket", author: "Nana Ndlovana-Mthimkhulu", coverImage: "/images/the-monkey-blanket-cover.png", rating: 4.9, reviewCount: 45, price: 19.99, originalPrice: 24.99, stock: 0, link: "/books/the-monkey-blanket", badge: "BESTSELLER" },
+    { id: "fearless", title: "Fearless", author: "Lauren Roberts", coverImage: "/images/fearless-cover.webp", rating: 4.9, reviewCount: 41, price: 29.99, originalPrice: 34.99, stock: 5, link: "/books/fearless", badge: "DEAL" },
+  ];
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -399,7 +405,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-6">
-            {featuredBooks.map((book) => (
+            {mockBooks.map((book) => (
               <Card key={book.id} className="group hover:shadow-lg transition-shadow">
                 <div className="relative">
                   <Link href={book.link}>
@@ -421,12 +427,12 @@ export default function HomePage() {
                   {/* Stock Status */}
                   <Badge 
                     className={`absolute top-1 right-1 sm:top-2 sm:right-2 text-xs ${
-                      book.inStock 
+                      book.stock > 0 
                         ? 'bg-green-500 text-white' 
                         : 'bg-red-500 text-white'
                     }`}
                   >
-                    {book.inStock ? 'In Stock' : 'Out of Stock'}
+                    {book.stock > 0 ? 'In Stock' : 'Out of Stock'}
                   </Badge>
 
                   {/* Action Buttons */}
@@ -435,7 +441,8 @@ export default function HomePage() {
                       size="sm"
                       variant="secondary"
                       onClick={() => handleAddToCart(book.id)}
-                      disabled={!book.inStock}
+                      disabled={book.stock === 0}
+                      data-track-add-to-cart={book.id}
                       className="h-6 w-6 sm:h-8 sm:w-8 p-0"
                     >
                       <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4" />
@@ -483,7 +490,8 @@ export default function HomePage() {
                   <div className="flex gap-1 sm:gap-2">
                     <Button
                       onClick={() => handleAddToCart(book.id)}
-                      disabled={!book.inStock}
+                      disabled={book.stock === 0}
+                      data-track-add-to-cart={book.id}
                       className="flex-1 text-xs"
                       size="sm"
                     >

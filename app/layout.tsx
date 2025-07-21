@@ -4,6 +4,7 @@ import { Providers } from "@/components/providers"
 import { AppShell } from "@/components/layout/app-shell"
 import "./globals.css"
 import "../styles/sidebar.css"
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -20,14 +21,29 @@ export const viewport = {
   userScalable: false
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        {/* Google Analytics */}
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <>
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}></script>
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');
+                `,
+              }}
+            />
+          </>
+        )}
+      </head>
       <body className={inter.className}>
+        <LanguageSwitcher />
         <Providers>
           <AppShell>
             {children}
@@ -35,5 +51,5 @@ export default function RootLayout({
         </Providers>
       </body>
     </html>
-  )
+  );
 }

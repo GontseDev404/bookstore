@@ -1,4 +1,5 @@
 import { BookPageClient } from "./book-page-client"
+import { useState, useEffect } from 'react';
 
 // Book data lookup
 const booksData = {
@@ -229,8 +230,13 @@ const booksData = {
   }
 }
 
-export default async function BookPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
+export default function BookPage({ params }: { params: { id: string } }) {
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+  const { id } = params
   const book = booksData[id as keyof typeof booksData]
   
   if (!book) {
@@ -245,6 +251,6 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
   }
 
   return (
-    <BookPageClient book={book} />
+    <BookPageClient book={book} loading={loading} />
   )
 }

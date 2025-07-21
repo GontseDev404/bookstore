@@ -1,28 +1,52 @@
-"use client"
+"use client";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
+import { ThemeProvider } from '@/components/theme-provider';
 
-import { useState, useEffect } from "react"
-import { ThemeProvider } from "@/components/theme-provider"
-import { SearchProvider } from "@/components/search-context"
-import { WishlistCartProvider } from "@/components/wishlist-cart-context"
+const AdminContext = createContext({ isAdmin: false });
 
-export function Providers({ children }: { children: React.ReactNode }) {
-  const [mounted, setMounted] = useState(false)
+export function AdminProvider({ children }: { children: React.ReactNode }) {
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) {
-    return <>{children}</>
-  }
+    async function checkAdmin() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+        setIsAdmin(profile?.role === "admin");
+      } else {
+        setIsAdmin(false);
+      }
+    }
+    checkAdmin();
+  }, []);
 
   return (
-    <WishlistCartProvider>
-      <SearchProvider>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-          {children}
-        </ThemeProvider>
-      </SearchProvider>
-    </WishlistCartProvider>
-  )
+    <AdminContext.Provider value={{ isAdmin }}>
+      {children}
+    </AdminContext.Provider>
+  );
+}
+
+export function useAdmin() {
+  return useContext(AdminContext);
+}
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      {/* Existing providers, e.g. AdminProvider, SearchProvider, WishlistCartProvider */}
+      <AdminProvider>
+        <SearchProvider>
+          <WishlistCartProvider>
+            {children}
+          </WishlistCartProvider>
+        </SearchProvider>
+      </AdminProvider>
+    </ThemeProvider>
+  );
 } 

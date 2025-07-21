@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
 
 export default function AccountPage() {
   const [user, setUser] = useState<any>(null);
@@ -24,6 +25,12 @@ export default function AccountPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [emailVerified, setEmailVerified] = useState(true);
+  const [verifyLoading, setVerifyLoading] = useState(false);
+  const [verifySuccess, setVerifySuccess] = useState<string | null>(null);
+  const [verifyError, setVerifyError] = useState<string | null>(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUserAndProfile = async () => {
@@ -31,6 +38,7 @@ export default function AccountPage() {
       const user = authData?.user;
       setUser(user);
       setEmail(user?.email || "");
+      setEmailVerified(user?.email_confirmed_at ? true : false);
       if (user) {
         // Fetch profile from 'profiles' table
         const { data: profileData } = await supabase
@@ -72,6 +80,21 @@ export default function AccountPage() {
     if (error) setError(error.message);
     else setSuccess("Profile updated successfully!");
     setLoading(false);
+  };
+
+  const handleResendVerification = async () => {
+    setVerifyLoading(true);
+    setVerifySuccess(null);
+    setVerifyError(null);
+    const { error } = await supabase.auth.resend({ type: 'signup', email });
+    if (error) setVerifyError(error.message);
+    else setVerifySuccess('Verification email sent!');
+    setVerifyLoading(false);
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/');
   };
 
   const [orders] = useState([
@@ -123,6 +146,21 @@ export default function AccountPage() {
         <h1 className="text-3xl font-bold text-foreground mb-2">My Account</h1>
         <p className="text-muted-foreground">Manage your account, orders, and preferences</p>
       </div>
+
+      {!emailVerified && (
+        <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded mb-6 flex items-center justify-between">
+          <span>Your email is not verified. Please check your inbox.</span>
+          <button
+            className="bg-yellow-400 text-yellow-900 px-3 py-1 rounded ml-4"
+            onClick={handleResendVerification}
+            disabled={verifyLoading}
+          >
+            {verifyLoading ? 'Sending...' : 'Resend Verification'}
+          </button>
+        </div>
+      )}
+      {verifySuccess && <p className="text-green-600 mb-2">{verifySuccess}</p>}
+      {verifyError && <p className="text-red-600 mb-2">{verifyError}</p>}
 
       <Tabs defaultValue="profile" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
@@ -374,6 +412,11 @@ export default function AccountPage() {
           </div>
         </TabsContent>
       </Tabs>
+      <div className="mt-8 flex justify-end">
+        <Button variant="outline" onClick={handleLogout}>
+          Log Out
+        </Button>
+      </div>
     </div>
   )
 } 

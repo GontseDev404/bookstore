@@ -10,12 +10,27 @@ import { RelatedBooks } from "@/components/book/related-books"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { useTrackBookView } from "@/components/recently-viewed"
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface BookPageClientProps {
   book: any; // Replace with proper book type
 }
 
-export function BookPageClient({ book }: BookPageClientProps) {
+export function BookPageClient({ book, loading }: { book: any, loading: boolean }) {
+  if (loading) {
+    return (
+      <div className="flex gap-6">
+        <Skeleton className="w-48 h-64" />
+        <div className="flex-1 space-y-4">
+          <Skeleton className="h-8 w-1/2" />
+          <Skeleton className="h-6 w-1/3" />
+          <Skeleton className="h-4 w-1/4" />
+          <Skeleton className="h-4 w-3/4" />
+          <Skeleton className="h-10 w-1/2" />
+        </div>
+      </div>
+    );
+  }
   const trackBookView = useTrackBookView();
 
   useEffect(() => {

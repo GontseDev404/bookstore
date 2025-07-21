@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
+import { useRouter } from 'next/navigation';
 import { 
   User, 
   Bell, 
@@ -27,9 +28,22 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
+import { supabase } from "@/lib/supabaseClient";
+import { useTheme } from "next-themes";
 
 export default function SettingsPage() {
   const [showPassword, setShowPassword] = useState(false)
+  const [userId, setUserId] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [profile, setProfile] = useState({
+    firstName: "John",
+    lastName: "Doe",
+    email: "john.doe@example.com",
+    phone: "+1 (555) 123-4567",
+    password: ""
+  })
   const [settings, setSettings] = useState({
     emailNotifications: true,
     orderUpdates: true,
@@ -40,13 +54,107 @@ export default function SettingsPage() {
     darkMode: false,
     language: "English"
   })
+  const router = useRouter();
+  const { theme, setTheme } = useTheme();
+
+  useEffect(() => {
+    async function fetchProfile() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const uid = user.id;
+        setUserId(typeof uid === 'string' ? uid : null);
+        const { data: profileData } = await supabase
+          .from("profiles")
+          .select("first_name, last_name, phone, email, email_notifications, order_updates, promotional_emails, newsletter, two_factor_auth, public_profile, dark_mode, language")
+          .eq("id", user.id)
+          .single();
+        if (profileData) {
+          setProfile({
+            firstName: profileData.first_name || "",
+            lastName: profileData.last_name || "",
+            email: profileData.email || "",
+            phone: profileData.phone || "",
+            password: ""
+          });
+          setSettings({
+            emailNotifications: profileData.email_notifications ?? true,
+            orderUpdates: profileData.order_updates ?? true,
+            promotionalEmails: profileData.promotional_emails ?? false,
+            newsletter: profileData.newsletter ?? true,
+            twoFactorAuth: profileData.two_factor_auth ?? false,
+            publicProfile: profileData.public_profile ?? false,
+            darkMode: profileData.dark_mode ?? false,
+            language: profileData.language || "English"
+          });
+        }
+      }
+    }
+    fetchProfile();
+  }, [])
+
+  const handleProfileChange = (key: string, value: string) => {
+    setProfile(prev => ({ ...prev, [key]: value }))
+  }
 
   const handleSettingChange = (key: string, value: boolean | string) => {
-    setSettings(prev => ({
-      ...prev,
-      [key]: value
-    }))
+    setSettings(prev => ({ ...prev, [key]: value }))
   }
+
+  const handleSaveProfile = async () => {
+    setLoading(true)
+    setSuccess(null)
+    setError(null)
+    if (!userId) return
+    const { error } = await supabase.from("profiles").upsert({
+      id: userId,
+      first_name: profile.firstName,
+      last_name: profile.lastName,
+      phone: profile.phone,
+      email: profile.email,
+      email_notifications: settings.emailNotifications,
+      order_updates: settings.orderUpdates,
+      promotional_emails: settings.promotionalEmails,
+      newsletter: settings.newsletter,
+      two_factor_auth: settings.twoFactorAuth,
+      public_profile: settings.publicProfile,
+      dark_mode: settings.darkMode,
+      language: settings.language
+    })
+    if (error) setError(error.message)
+    else setSuccess("Profile updated successfully!")
+    setLoading(false)
+  }
+
+  const handleDeleteAccount = async () => {
+    if (!userId) return
+    setLoading(true)
+    setSuccess(null)
+    setError(null)
+    // Delete from Supabase Auth
+    const { error: authError } = await supabase.auth.admin.deleteUser(userId)
+    // Delete from profiles table
+    const { error: profileError } = await supabase.from("profiles").delete().eq("id", userId)
+    if (authError || profileError) setError(authError?.message || profileError?.message)
+    else setSuccess("Account deleted. You will be logged out.")
+    setLoading(false)
+    // Optionally, redirect or log out user
+  }
+
+  const handleExportData = () => {
+    const data = { profile, settings }
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = "profile.json"
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/');
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -124,20 +232,38 @@ export default function SettingsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="firstName">First Name</Label>
-                  <Input id="firstName" defaultValue="John" />
+                  <Input 
+                    id="firstName" 
+                    value={profile.firstName} 
+                    onChange={(e) => handleProfileChange("firstName", e.target.value)}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="lastName">Last Name</Label>
-                  <Input id="lastName" defaultValue="Doe" />
+                  <Input 
+                    id="lastName" 
+                    value={profile.lastName} 
+                    onChange={(e) => handleProfileChange("lastName", e.target.value)}
+                  />
                 </div>
               </div>
               <div>
                 <Label htmlFor="email">Email Address</Label>
-                <Input id="email" type="email" defaultValue="john.doe@example.com" />
+                <Input 
+                  id="email" 
+                  type="email" 
+                  value={profile.email} 
+                  onChange={(e) => handleProfileChange("email", e.target.value)}
+                />
               </div>
               <div>
                 <Label htmlFor="phone">Phone Number</Label>
-                <Input id="phone" type="tel" defaultValue="+1 (555) 123-4567" />
+                <Input 
+                  id="phone" 
+                  type="tel" 
+                  value={profile.phone} 
+                  onChange={(e) => handleProfileChange("phone", e.target.value)}
+                />
               </div>
               <div>
                 <Label htmlFor="password">Password</Label>
@@ -145,7 +271,8 @@ export default function SettingsPage() {
                   <Input 
                     id="password" 
                     type={showPassword ? "text" : "password"} 
-                    defaultValue="••••••••"
+                    value={profile.password} 
+                    onChange={(e) => handleProfileChange("password", e.target.value)}
                   />
                   <Button
                     variant="ghost"
@@ -157,10 +284,16 @@ export default function SettingsPage() {
                   </Button>
                 </div>
               </div>
-              <Button className="w-full">
-                <Save className="h-4 w-4 mr-2" />
-                Save Changes
+              <Button 
+                className="w-full" 
+                onClick={handleSaveProfile}
+                disabled={loading}
+              >
+                {loading ? "Saving..." : "Save Changes"}
+                <Save className="h-4 w-4 ml-2" />
               </Button>
+              {success && <p className="text-green-600">{success}</p>}
+              {error && <p className="text-red-600">{error}</p>}
             </CardContent>
           </Card>
 
@@ -296,6 +429,63 @@ export default function SettingsPage() {
               </Button>
             </CardContent>
           </Card>
+
+          {/* Quick Actions */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button 
+                variant="outline" 
+                className="w-full justify-start" 
+                onClick={handleExportData}
+                disabled={loading}
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Export Data
+              </Button>
+              <div className="w-full flex flex-col gap-2">
+                <label htmlFor="theme-select" className="text-sm font-medium">Appearance (Theme)</label>
+                <select
+                  id="theme-select"
+                  value={theme}
+                  onChange={e => setTheme(e.target.value)}
+                  className="border rounded px-2 py-1"
+                >
+                  <option value="system">System</option>
+                  <option value="light">Light</option>
+                  <option value="dark">Dark</option>
+                </select>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Danger Zone */}
+          <Card className="border-red-200">
+            <CardHeader>
+              <CardTitle className="text-red-600">Danger Zone</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button 
+                variant="destructive" 
+                className="w-full justify-start" 
+                onClick={handleDeleteAccount}
+                disabled={loading}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Account
+              </Button>
+              <Button className="w-full mt-4" variant="outline" onClick={handleLogout}>
+                Log Out
+              </Button>
+              <p className="text-xs text-gray-600">
+                This action cannot be undone. All your data will be permanently deleted.
+              </p>
+              {success && <p className="text-green-600">{success}</p>}
+              {error && <p className="text-red-600">{error}</p>}
+            </CardContent>
+          </Card>
         </div>
 
         {/* Sidebar */}
@@ -322,43 +512,6 @@ export default function SettingsPage() {
                 <span className="text-sm">Reviews Written</span>
                 <span className="text-sm font-medium">5</span>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button variant="outline" className="w-full justify-start">
-                <Download className="h-4 w-4 mr-2" />
-                Export Data
-              </Button>
-              <Button variant="outline" className="w-full justify-start">
-                <Globe className="h-4 w-4 mr-2" />
-                Change Language
-              </Button>
-              <Button variant="outline" className="w-full justify-start">
-                <Palette className="h-4 w-4 mr-2" />
-                Appearance
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Danger Zone */}
-          <Card className="border-red-200">
-            <CardHeader>
-              <CardTitle className="text-red-600">Danger Zone</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button variant="destructive" className="w-full justify-start">
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete Account
-              </Button>
-              <p className="text-xs text-gray-600">
-                This action cannot be undone. All your data will be permanently deleted.
-              </p>
             </CardContent>
           </Card>
         </div>
