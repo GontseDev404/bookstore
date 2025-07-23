@@ -16,13 +16,13 @@ export function Footer() {
               Your trusted source for books, audiobooks, and literary discoveries.
             </p>
             <div className="flex space-x-4">
-              <Link href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary">
+              <Link href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary" aria-label="Facebook">
                 <Facebook className="h-5 w-5" />
               </Link>
-              <Link href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary">
+              <Link href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary" aria-label="Twitter">
                 <Twitter className="h-5 w-5" />
               </Link>
-              <Link href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary">
+              <Link href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary" aria-label="Instagram">
                 <Instagram className="h-5 w-5" />
               </Link>
             </div>
@@ -133,6 +133,7 @@ export function Footer() {
         size="icon"
         className="fixed bottom-4 right-4 rounded-full shadow-lg"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        aria-label="Back to top"
       >
         <ArrowUp className="h-4 w-4" />
       </Button>

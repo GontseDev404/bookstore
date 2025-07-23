@@ -32,81 +32,81 @@ describe('AuthPage', () => {
   it('renders sign in form by default', () => {
     render(<AuthPage />);
     expect(screen.getByText(/Sign In \/ Sign Up/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Email/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Password/i)).toBeInTheDocument();
+    expect(screen.getByLabelText('Email address')).toBeInTheDocument();
+    expect(screen.getByLabelText('Password')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Sign In/i })).toBeInTheDocument();
   });
 
   it('switches to sign up mode and submits sign up', async () => {
     render(<AuthPage />);
-    fireEvent.click(screen.getByText(/Sign Up/i));
-    fireEvent.change(screen.getByPlaceholderText(/Email/i), { target: { value: 'new@example.com' } });
-    fireEvent.change(screen.getByPlaceholderText(/Password/i), { target: { value: 'password123' } });
     fireEvent.click(screen.getByRole('button', { name: /Sign Up/i }));
+    fireEvent.change(screen.getByLabelText('Email address'), { target: { value: 'new@example.com' } });
+    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'password123' } });
+    fireEvent.click(screen.getByRole('button', { name: /^Sign Up$/i }));
     await waitFor(() => expect(screen.getByText(/Check your email/i)).toBeInTheDocument());
   });
 
   it('shows error on sign up failure', async () => {
     render(<AuthPage />);
-    fireEvent.click(screen.getByText(/Sign Up/i));
-    fireEvent.change(screen.getByPlaceholderText(/Email/i), { target: { value: 'error@example.com' } });
-    fireEvent.change(screen.getByPlaceholderText(/Password/i), { target: { value: 'password123' } });
     fireEvent.click(screen.getByRole('button', { name: /Sign Up/i }));
+    fireEvent.change(screen.getByLabelText('Email address'), { target: { value: 'error@example.com' } });
+    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'password123' } });
+    fireEvent.click(screen.getByRole('button', { name: /^Sign Up$/i }));
     await waitFor(() => expect(screen.getByText(/Sign up error/i)).toBeInTheDocument());
   });
 
   it('submits sign in', async () => {
     render(<AuthPage />);
-    fireEvent.change(screen.getByPlaceholderText(/Email/i), { target: { value: 'user@example.com' } });
-    fireEvent.change(screen.getByPlaceholderText(/Password/i), { target: { value: 'password123' } });
+    fireEvent.change(screen.getByLabelText('Email address'), { target: { value: 'user@example.com' } });
+    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'password123' } });
     fireEvent.click(screen.getByRole('button', { name: /Sign In/i }));
     await waitFor(() => expect(screen.getByText(/Signed in successfully/i)).toBeInTheDocument());
   });
 
   it('shows error on sign in failure', async () => {
     render(<AuthPage />);
-    fireEvent.change(screen.getByPlaceholderText(/Email/i), { target: { value: 'wrong@example.com' } });
-    fireEvent.change(screen.getByPlaceholderText(/Password/i), { target: { value: 'password123' } });
+    fireEvent.change(screen.getByLabelText('Email address'), { target: { value: 'wrong@example.com' } });
+    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'password123' } });
     fireEvent.click(screen.getByRole('button', { name: /Sign In/i }));
     await waitFor(() => expect(screen.getByText(/Sign in error/i)).toBeInTheDocument());
   });
 
   it('switches tabs between email, google, and phone', () => {
     render(<AuthPage />);
-    fireEvent.click(screen.getByText(/Google/i));
-    expect(screen.getByRole('button', { name: /Continue with Google/i })).toBeInTheDocument();
-    fireEvent.click(screen.getByText(/Phone/i));
-    expect(screen.getByPlaceholderText(/Phone number/i)).toBeInTheDocument();
-    fireEvent.click(screen.getByText(/Email/i));
-    expect(screen.getByPlaceholderText(/Email/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Google login tab/i }));
+    expect(screen.getByRole('button', { name: /Sign in with Google/i })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Phone login tab/i }));
+    expect(screen.getByLabelText('Phone number')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Email login tab/i }));
+    expect(screen.getByLabelText('Email address')).toBeInTheDocument();
   });
 
   it('handles phone OTP send and verify', async () => {
     render(<AuthPage />);
-    fireEvent.click(screen.getByText(/Phone/i));
-    fireEvent.change(screen.getByPlaceholderText(/Phone number/i), { target: { value: '+1234567890' } });
+    fireEvent.click(screen.getByRole('button', { name: /Phone login tab/i }));
+    fireEvent.change(screen.getByLabelText('Phone number'), { target: { value: '+1234567890' } });
     fireEvent.click(screen.getByRole('button', { name: /Send OTP/i }));
     await waitFor(() => expect(screen.getByText(/OTP sent/i)).toBeInTheDocument());
-    fireEvent.change(screen.getByPlaceholderText(/Enter OTP code/i), { target: { value: '1234' } });
+    fireEvent.change(screen.getByLabelText('OTP code'), { target: { value: '1234' } });
     fireEvent.click(screen.getByRole('button', { name: /Verify OTP/i }));
     await waitFor(() => expect(screen.getByText(/Signed in successfully/i)).toBeInTheDocument());
   });
 
   it('shows error on OTP send failure', async () => {
     render(<AuthPage />);
-    fireEvent.click(screen.getByText(/Phone/i));
-    fireEvent.change(screen.getByPlaceholderText(/Phone number/i), { target: { value: '+0000000000' } });
+    fireEvent.click(screen.getByRole('button', { name: /Phone login tab/i }));
+    fireEvent.change(screen.getByLabelText('Phone number'), { target: { value: '+0000000000' } });
     fireEvent.click(screen.getByRole('button', { name: /Send OTP/i }));
     await waitFor(() => expect(screen.getByText(/OTP error/i)).toBeInTheDocument());
   });
 
   it('shows error on OTP verify failure', async () => {
     render(<AuthPage />);
-    fireEvent.click(screen.getByText(/Phone/i));
-    fireEvent.change(screen.getByPlaceholderText(/Phone number/i), { target: { value: '+1234567890' } });
+    fireEvent.click(screen.getByRole('button', { name: /Phone login tab/i }));
+    fireEvent.change(screen.getByLabelText('Phone number'), { target: { value: '+1234567890' } });
     fireEvent.click(screen.getByRole('button', { name: /Send OTP/i }));
     await waitFor(() => expect(screen.getByText(/OTP sent/i)).toBeInTheDocument());
-    fireEvent.change(screen.getByPlaceholderText(/Enter OTP code/i), { target: { value: '0000' } });
+    fireEvent.change(screen.getByLabelText('OTP code'), { target: { value: '0000' } });
     fireEvent.click(screen.getByRole('button', { name: /Verify OTP/i }));
     await waitFor(() => expect(screen.getByText(/OTP verify error/i)).toBeInTheDocument());
   });

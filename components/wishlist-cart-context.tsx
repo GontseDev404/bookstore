@@ -21,11 +21,9 @@ export const WishlistCartContext = createContext<WishlistCartContextType>({
 export function WishlistCartProvider({ children }: { children: React.ReactNode }) {
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [cart, setCart] = useState<string[]>([]);
-  const [mounted, setMounted] = useState(false);
 
-  // Persist to localStorage
+  // Load from localStorage on mount
   useEffect(() => {
-    setMounted(true);
     const w = localStorage.getItem("wishlist");
     const c = localStorage.getItem("cart");
     if (w) setWishlist(JSON.parse(w));
@@ -33,16 +31,12 @@ export function WishlistCartProvider({ children }: { children: React.ReactNode }
   }, []);
   
   useEffect(() => {
-    if (mounted) {
-      localStorage.setItem("wishlist", JSON.stringify(wishlist));
-    }
-  }, [wishlist, mounted]);
+    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+  }, [wishlist]);
   
   useEffect(() => {
-    if (mounted) {
-      localStorage.setItem("cart", JSON.stringify(cart));
-    }
-  }, [cart, mounted]);
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
 
   function toggleWishlist(id: string) {
     setWishlist((prev) =>
@@ -54,10 +48,6 @@ export function WishlistCartProvider({ children }: { children: React.ReactNode }
   }
   function removeFromCart(id: string) {
     setCart((prev) => prev.filter((x) => x !== id));
-  }
-
-  if (!mounted) {
-    return <>{children}</>;
   }
 
   return (

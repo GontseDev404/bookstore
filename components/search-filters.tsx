@@ -154,7 +154,8 @@ export function SearchFilters({ onFiltersChange, isOpen, onToggle }: SearchFilte
                 <Checkbox
                   id={format}
                   checked={filters.format.includes(format)}
-                  onCheckedChange={(checked) => {
+                  onChange={(e) => {
+                    const checked = (e.target as HTMLInputElement).checked;
                     const newFormats = checked
                       ? [...filters.format, format]
                       : filters.format.filter(f => f !== format)
@@ -186,7 +187,7 @@ export function SearchFilters({ onFiltersChange, isOpen, onToggle }: SearchFilte
               <Checkbox
                 id="in-stock"
                 checked={filters.inStock}
-                onCheckedChange={(checked) => handleFilterChange('inStock', checked)}
+                onChange={(e) => handleFilterChange('inStock', (e.target as HTMLInputElement).checked)}
               />
               <Label htmlFor="in-stock">In Stock</Label>
             </div>
@@ -194,7 +195,7 @@ export function SearchFilters({ onFiltersChange, isOpen, onToggle }: SearchFilte
               <Checkbox
                 id="on-sale"
                 checked={filters.onSale}
-                onCheckedChange={(checked) => handleFilterChange('onSale', checked)}
+                onChange={(e) => handleFilterChange('onSale', (e.target as HTMLInputElement).checked)}
               />
               <Label htmlFor="on-sale">On Sale</Label>
             </div>

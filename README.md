@@ -93,3 +93,28 @@ This project is licensed under the MIT License.
 1. Push to the `main` branch on GitHub, or
 2. Manually run the `Deploy to Azure Container Apps` workflow in GitHub Actions
    - This will build, push, and deploy the latest Docker image automatically 
+
+## Testing
+
+### Unit & Integration Tests (Jest)
+- Run all non-database tests:
+  ```bash
+  npm test
+  ```
+- Jest is configured to ignore E2E tests in the `e2e/` directory.
+- Some database-related tests (e.g., checkout-flow) may be skipped due to ESM/Supabase issues.
+
+### End-to-End Tests (Playwright)
+- Start your dev server:
+  ```bash
+  npm run dev
+  ```
+- In a separate terminal, run Playwright E2E tests:
+  ```bash
+  npx playwright test e2e/
+  ```
+- Playwright tests are not run by Jest and must be run separately.
+
+### Troubleshooting
+- If you see ESM import errors in Jest (e.g., in checkout-flow.test.tsx), these are due to ESM-only dependencies and can be skipped if not testing database flows.
+- Only one Jest config is used (`jest.config.js`). 

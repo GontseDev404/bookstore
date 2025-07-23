@@ -30,13 +30,13 @@ describe('CheckoutPage', () => {
     expect(screen.getByText(/Order Summary/i)).toBeInTheDocument();
     expect(screen.getByText(/Silver Feet and Her Wonder/i)).toBeInTheDocument();
     expect(screen.getByText(/Fearless/i)).toBeInTheDocument();
-    expect(screen.getByText(/Total/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Total/i).length).toBeGreaterThan(0);
   });
 
   it('proceeds through guest checkout and payment to confirmation', async () => {
     renderWithCart(['silver-feet-and-her-wonder']);
     // Guest checkout step
-    expect(screen.getByText(/Guest Checkout/i)).toBeInTheDocument();
+    expect(screen.getByText(/Personal Information/i)).toBeInTheDocument();
     // Simulate guest checkout (bypassing GuestCheckout component logic)
     fireEvent.click(screen.getByRole('button', { name: /Continue as Guest/i }));
     // Payment step

@@ -158,7 +158,7 @@ export function GuestCheckout({ onGuestCheckout, onAccountCheckout }: GuestCheck
                   <Checkbox
                     id="saveInfo"
                     checked={guestData.saveInfo}
-                    onCheckedChange={(checked) => handleInputChange('saveInfo', checked as boolean)}
+                    onChange={(e) => handleInputChange('saveInfo', (e.target as HTMLInputElement).checked)}
                   />
                   <Label htmlFor="saveInfo">
                     Save my information for faster checkout next time
@@ -168,7 +168,7 @@ export function GuestCheckout({ onGuestCheckout, onAccountCheckout }: GuestCheck
                   <Checkbox
                     id="newsletter"
                     checked={guestData.newsletter}
-                    onCheckedChange={(checked) => handleInputChange('newsletter', checked as boolean)}
+                    onChange={(e) => handleInputChange('newsletter', (e.target as HTMLInputElement).checked)}
                   />
                   <Label htmlFor="newsletter">
                     Subscribe to our newsletter for exclusive offers and updates

@@ -132,7 +132,7 @@ export function NewsletterSignup({
                 <Checkbox
                   id={key}
                   checked={checked}
-                  onCheckedChange={(isChecked) => handlePreferenceChange(key, isChecked as boolean)}
+                  onChange={(e) => handlePreferenceChange(key, (e.target as HTMLInputElement).checked)}
                 />
                 <Label htmlFor={key} className="text-sm">
                   {key === 'newReleases' && 'New releases and pre-orders'}

@@ -134,7 +134,7 @@ export default function SettingsPage() {
     const { error: authError } = await supabase.auth.admin.deleteUser(userId)
     // Delete from profiles table
     const { error: profileError } = await supabase.from("profiles").delete().eq("id", userId)
-    if (authError || profileError) setError(authError?.message || profileError?.message)
+    if (authError || profileError) setError(authError?.message ?? profileError?.message ?? null)
     else setSuccess("Account deleted. You will be logged out.")
     setLoading(false)
     // Optionally, redirect or log out user

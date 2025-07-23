@@ -2,6 +2,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { ThemeProvider } from '@/components/theme-provider';
+import { SearchProvider } from './search-context';
+import { WishlistCartProvider } from './wishlist-cart-context';
 
 const AdminContext = createContext({ isAdmin: false });
 

@@ -12,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { SearchContext } from "@/components/search-context"
 import { WishlistCartContext } from "@/components/wishlist-cart-context"
 import { EnhancedSidebar } from "./enhanced-sidebar"
+import { supabase } from '@/lib/supabaseClient';
 
 export function Header() {
   const { searchQuery, setSearchQuery } = useContext(SearchContext)
@@ -20,6 +21,17 @@ export function Header() {
   const [showSearchDropdown, setShowSearchDropdown] = useState(false)
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUser(data?.user));
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => {
+      listener?.subscription.unsubscribe();
+    };
+  }, []);
 
   // Search suggestions data
   const searchSuggestions = [
@@ -109,7 +121,7 @@ export function Header() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-4">
             <EnhancedSidebar />
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2" aria-label="Home">
               <Image src="/images/2books-logo.png" alt="BookHaven Logo" width={32} height={32} className="h-8 w-auto sm:h-10" />
               <span className="hidden text-lg font-bold sm:text-xl md:inline-block">BookHaven</span>
             </Link>
@@ -134,13 +146,14 @@ export function Header() {
                     size="sm"
                     onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
                     className="h-5 w-5 sm:h-6 sm:w-auto px-1 sm:px-2 text-xs"
+                    aria-label="Show filters"
                   >
-                    <Filter className="h-2 w-2 sm:h-3 sm:w-3 mr-0 sm:mr-1" />
+                    <Filter className="h-2 w-2 sm:h-3 sm:w-3 mr-0 sm:mr-1" aria-label="Filter icon" />
                     <span className="hidden sm:inline">Filters</span>
                   </Button>
-                  <Button type="submit" size="sm" className="h-5 w-5 sm:h-6 sm:w-auto px-1 sm:px-3 text-xs">
+                  <Button type="submit" size="sm" className="h-5 w-5 sm:h-6 sm:w-auto px-1 sm:px-3 text-xs" aria-label="Search">
                     <span className="hidden sm:inline">Search</span>
-                    <Search className="h-3 w-3 sm:hidden" />
+                    <Search className="h-3 w-3 sm:hidden" aria-label="Search icon" />
                   </Button>
                 </div>
               </div>
@@ -259,54 +272,77 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-1 sm:gap-3">
-            <div className="flex items-center gap-1 sm:gap-3">
-              <Button variant="ghost" size="icon" className="md:hidden h-8 w-8 sm:h-9 sm:w-9">
-                <Search className="h-4 w-4 sm:h-5 sm:w-5" />
-                <span className="sr-only">Search</span>
+            <Button variant="ghost" size="icon" className="md:hidden h-8 w-8 sm:h-9 sm:w-9" aria-label="Open search">
+              <Search className="h-4 w-4 sm:h-5 sm:w-5" />
+              <span className="sr-only">Search</span>
+            </Button>
+            {user ? (
+              <>
+                <Link href="/profile">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9" aria-label="Profile">
+                    <User className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <span className="sr-only">Profile</span>
+                  </Button>
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 sm:h-9 sm:w-9"
+                  aria-label="Logout"
+                  onClick={async () => { await supabase.auth.signOut(); }}
+                >
+                  <span className="sr-only">Logout</span>
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href="/auth">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9" aria-label="Sign In">
+                    <User className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <span className="sr-only">Sign In</span>
+                  </Button>
+                </Link>
+                <Link href="/auth">
+                  <Button variant="outline" size="sm" className="ml-2" aria-label="Sign Up">
+                    Sign Up
+                  </Button>
+                </Link>
+              </>
+            )}
+            <Link href="/wishlist">
+              <Button variant="ghost" size="icon" className="relative h-8 w-8 sm:h-9 sm:w-9" aria-label="Wishlist">
+                <Heart className="h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="sr-only">Wishlist</span>
               </Button>
-
-              <Link href="/account">
-                <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9">
-                  <User className="h-4 w-4 sm:h-5 sm:w-5" />
-                  <span className="sr-only">Account</span>
-                </Button>
-              </Link>
-
-              <Link href="/wishlist">
-                <Button variant="ghost" size="icon" className="relative h-8 w-8 sm:h-9 sm:w-9">
-                  <Heart className="h-4 w-4 sm:h-5 sm:w-5" />
-                  <span className="sr-only">Wishlist</span>
-                </Button>
-              </Link>
-
-              <Link href="/cart">
-                <Button variant="ghost" size="icon" className="relative h-8 w-8 sm:h-9 sm:w-9">
-                  <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />
-                  <span className="absolute right-0 top-0 flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-primary text-[8px] sm:text-[10px] text-primary-foreground">
-                    {cart.length}
-                  </span>
-                  <span className="sr-only">Cart</span>
-                </Button>
-              </Link>
-            </div>
+            </Link>
+            <Link href="/cart">
+              <Button variant="ghost" size="icon" className="relative h-8 w-8 sm:h-9 sm:w-9" aria-label="Cart">
+                <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="absolute right-0 top-0 flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-primary text-[8px] sm:text-[10px] text-primary-foreground">
+                  {cart.length}
+                </span>
+                <span className="sr-only">Cart</span>
+              </Button>
+            </Link>
           </div>
         </div>
 
         {/* Navigation */}
         <nav className="hidden md:flex items-center space-x-6 lg:space-x-8 mt-2 sm:mt-3">
-          <Link href="/books" className="text-sm font-medium hover:text-primary">
+          <Link href="/books" className="text-sm font-medium hover:text-primary" aria-label="All Books">
             All Books
           </Link>
-          <Link href="/bestsellers" className="text-sm font-medium hover:text-primary">
+          <Link href="/bestsellers" className="text-sm font-medium hover:text-primary" aria-label="Bestsellers">
             Bestsellers
           </Link>
-          <Link href="/new-releases" className="text-sm font-medium hover:text-primary">
+          <Link href="/new-releases" className="text-sm font-medium hover:text-primary" aria-label="New Releases">
             New Releases
           </Link>
-          <Link href="/categories" className="text-sm font-medium hover:text-primary">
+          <Link href="/categories" className="text-sm font-medium hover:text-primary" aria-label="Categories">
             Categories
           </Link>
-          <Link href="/deals" className="text-sm font-medium hover:text-primary">
+          <Link href="/deals" className="text-sm font-medium hover:text-primary" aria-label="Deals">
             Deals
           </Link>
         </nav>

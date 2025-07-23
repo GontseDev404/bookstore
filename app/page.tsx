@@ -11,55 +11,56 @@ import { WishlistCartContext } from "@/components/wishlist-cart-context"
 import { useContext } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { Carousel, CarouselSlide } from '@/components/Carousel';
 
 export default function HomePage() {
   const { wishlist, toggleWishlist, cart, addToCart } = useContext(WishlistCartContext)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isPlaying, setIsPlaying] = useState(true)
 
-  // Hero carousel data with different book types
-  const heroSlides = [
+  // Hero carousel data
+  const heroSlides: CarouselSlide[] = [
     {
-      id: "mark-twain",
-      title: "MARK TWAIN",
-      author: "Ron Chernow",
+      id: 'mark-twain',
+      title: 'MARK TWAIN',
+      author: 'Ron Chernow',
       description: "Dive deep into the life of one of America's literary geniuses through the eyes of a master biographer.",
-      image: "/images/mark-twain-cover.webp",
-      link: "/books/mark-twain",
-      badge: "$5 OFF",
-      type: "Deals"
+      image: '/images/mark-twain-cover.webp',
+      link: '/books/mark-twain',
+      badge: '$5 OFF',
+      type: 'Deals',
     },
     {
-      id: "fearless",
-      title: "FEARLESS",
-      author: "Lauren Roberts",
-      description: "A gripping tale of courage and resilience in the face of adversity.",
-      image: "/images/fearless-cover.webp",
-      link: "/books/fearless",
-      badge: "NEW",
-      type: "New Release"
+      id: 'fearless',
+      title: 'FEARLESS',
+      author: 'Lauren Roberts',
+      description: 'A gripping tale of courage and resilience in the face of adversity.',
+      image: '/images/fearless-cover.webp',
+      link: '/books/fearless',
+      badge: 'NEW',
+      type: 'New Release',
     },
     {
-      id: "the-tenant",
-      title: "THE TENANT",
-      author: "Freida McFadden",
-      description: "A psychological thriller that will keep you guessing until the very end.",
-      image: "/images/the-tenant-cover.webp",
-      link: "/books/the-tenant",
-      badge: "BESTSELLER",
-      type: "Bestseller"
+      id: 'the-tenant',
+      title: 'THE TENANT',
+      author: 'Freida McFadden',
+      description: 'A psychological thriller that will keep you guessing until the very end.',
+      image: '/images/the-tenant-cover.webp',
+      link: '/books/the-tenant',
+      badge: 'BESTSELLER',
+      type: 'Bestseller',
     },
     {
-      id: "silver-feet-and-her-wonder",
-      title: "SILVER FEET AND HER WONDER",
-      author: "Nana Ndlovana-Mthimkhulu",
-      description: "A captivating story of wonder and discovery that will enchant readers of all ages.",
-      image: "/images/silver-feet-cover.png",
-      link: "/books/silver-feet-and-her-wonder",
-      badge: "FEATURED",
-      type: "Featured"
-    }
-  ]
+      id: 'silver-feet-and-her-wonder',
+      title: 'SILVER FEET AND HER WONDER',
+      author: 'Nana Ndlovana-Mthimkhulu',
+      description: 'A captivating story of wonder and discovery that will enchant readers of all ages.',
+      image: '/images/silver-feet-cover.png',
+      link: '/books/silver-feet-and-her-wonder',
+      badge: 'FEATURED',
+      type: 'Featured',
+    },
+  ];
 
   // Use slides in fixed order to prevent hydration mismatch
   const slides = heroSlides
@@ -262,131 +263,17 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-amber-900 via-amber-800 to-amber-700">
-        <div className="container mx-auto px-4 py-4 sm:py-6">
-          {/* Slide Indicators */}
-          <div className="flex justify-center mb-3 sm:mb-4">
-            <div className="flex gap-1 sm:gap-2">
-              {slides.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleSlideClick(index)}
-                  className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
-                    index === currentSlide 
-                      ? 'bg-white scale-110' 
-                      : 'bg-white/50 hover:bg-white/75'
-                  }`}
-                />
-              ))}
-            </div>
-            {/* Play/Pause Button */}
-            <Button
-              onClick={() => setIsPlaying(!isPlaying)}
-              variant="ghost"
-              size="icon"
-              className="ml-4 bg-white/20 hover:bg-white/30 text-white border-white/30 backdrop-blur-sm h-6 w-6 sm:h-8 sm:w-8"
-            >
-              {isPlaying ? <Pause className="h-3 w-3 sm:h-4 sm:w-4" /> : <Play className="h-3 w-3 sm:h-4 sm:w-4" />}
-            </Button>
-          </div>
-
-          {/* Custom Navigation Buttons */}
-          <div className="absolute top-1/2 left-2 right-2 sm:left-4 sm:right-4 flex justify-between items-center pointer-events-none z-10">
-            <Button
-              onClick={handlePreviousSlide}
-              variant="ghost"
-              size="icon"
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30 pointer-events-auto backdrop-blur-sm h-8 w-8 sm:h-10 sm:w-10 transition-all duration-200 hover:scale-110"
-              aria-label="Previous slide"
-            >
-              <ChevronLeft className="h-4 w-4 sm:h-6 sm:w-6" />
-            </Button>
-            <Button
-              onClick={handleNextSlide}
-              variant="ghost"
-              size="icon"
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30 pointer-events-auto backdrop-blur-sm h-8 w-8 sm:h-10 sm:w-10 transition-all duration-200 hover:scale-110"
-              aria-label="Next slide"
-            >
-              <ChevronRight className="h-4 w-4 sm:h-6 sm:w-6" />
-            </Button>
-          </div>
-
-          {/* Custom Slideshow */}
-          <div className="relative w-full overflow-hidden rounded-lg slideshow-container">
-            <div 
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-            >
-              {slides.map((slide, index) => (
-                <div key={slide.id} className="w-full flex-shrink-0">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-center">
-                    <div className="relative group">
-                      <Link href={slide.link} className="block">
-                        <div className="aspect-[3/4] relative max-w-[200px] sm:max-w-xs mx-auto transform transition-transform duration-500 group-hover:scale-105 cursor-pointer">
-                          <Image
-                            src={slide.image}
-                            alt={slide.title}
-                            fill
-                            className="object-cover rounded-lg shadow-xl group-hover:shadow-2xl transition-shadow duration-300"
-                          />
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 rounded-lg"></div>
-                          <Badge className="absolute top-1 left-1 sm:top-2 sm:left-2 bg-red-500 text-white animate-pulse text-xs z-10">
-                            {slide.badge}
-                          </Badge>
-                          <Badge className="absolute top-1 right-1 sm:top-2 sm:right-2 bg-blue-500 text-white text-xs z-10">
-                            {slide.type}
-                          </Badge>
-                          {/* Hover overlay with "View Details" text */}
-                          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <div className="bg-white/90 text-amber-900 px-4 py-2 rounded-lg font-semibold text-sm">
-                              View Details
-                            </div>
-                          </div>
-                        </div>
-                      </Link>
-                    </div>
-                    <div className="space-y-3 sm:space-y-4 text-white text-center lg:text-left">
-                      <h1 className="text-2xl sm:text-3xl lg:text-5xl font-bold leading-tight animate-fade-in">
-                        {slide.title}
-                      </h1>
-                      <p className="text-base sm:text-lg text-white/90 animate-fade-in animation-delay-200">
-                        {slide.author}
-                      </p>
-                      <p className="text-white/80 text-sm sm:text-base animate-fade-in animation-delay-400">
-                        {slide.description}
-                      </p>
-                      <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-3 sm:gap-4 animate-fade-in animation-delay-600">
-                        <Link href={slide.link}>
-                          <Button 
-                            size="lg" 
-                            className="bg-white text-amber-900 hover:bg-white/90 font-semibold transform hover:scale-105 transition-all duration-300 text-sm sm:text-base shadow-lg hover:shadow-xl"
-                          >
-                            SHOP NOW
-                          </Button>
-                        </Link>
-                        <Button 
-                          variant="outline" 
-                          size="lg"
-                          className="bg-white text-amber-900 hover:bg-white/90 font-semibold transform hover:scale-105 transition-all duration-300 text-sm sm:text-base shadow-lg hover:shadow-xl border-white"
-                          onClick={() => handleToggleWishlist(slide.id.toString())}
-                        >
-                          <Heart 
-                            className="h-4 w-4 mr-2" 
-                            fill={wishlist.includes(slide.id.toString()) ? "currentColor" : "none"}
-                          />
-                          {wishlist.includes(slide.id.toString()) ? 'Remove from Wishlist' : 'Add to Wishlist'}
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <Carousel
+        slides={heroSlides}
+        currentSlide={currentSlide}
+        isPlaying={isPlaying}
+        wishlist={wishlist}
+        onSlideChange={setCurrentSlide}
+        onPlayPause={() => setIsPlaying((prev) => !prev)}
+        onPrev={() => setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
+        onNext={() => setCurrentSlide((prev) => (prev + 1) % heroSlides.length)}
+        onToggleWishlist={handleToggleWishlist}
+      />
 
       {/* Featured Books Section */}
       <section className="py-8 sm:py-16 bg-background">
