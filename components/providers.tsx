@@ -40,7 +40,7 @@ export function useAdmin() {
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
       {/* Existing providers, e.g. AdminProvider, SearchProvider, WishlistCartProvider */}
       <AdminProvider>
         <SearchProvider>

@@ -187,7 +187,7 @@ export function EnhancedSidebar() {
           <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-80 p-0 bg-background h-screen">
+      <SheetContent side="left" className="w-80 p-0 bg-background h-screen flex flex-col">
         <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
         <SheetDescription className="sr-only">Access the main navigation menu for BookHaven</SheetDescription>
         

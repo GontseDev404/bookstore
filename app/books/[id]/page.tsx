@@ -1,3 +1,4 @@
+"use client";
 import { BookPageClient } from "./book-page-client"
 import { useState, useEffect } from 'react';
 
