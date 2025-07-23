@@ -57,6 +57,13 @@ RUN chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Install Playwright for E2E testing (dev dependency)
+RUN npm install --save-dev @playwright/test
+
+# To run E2E tests in the container:
+# 1. Start the dev server: npm run dev
+# 2. In another shell: npx playwright test e2e/
+
 USER nextjs
 
 EXPOSE 3000
