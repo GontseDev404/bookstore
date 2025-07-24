@@ -3,185 +3,41 @@ name: Deploy to Azure Container Apps
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
-  workflow_dispatch:
-
-env:
-  REGISTRY: bookhavenregistry.azurecr.io
-  IMAGE_NAME: bookstore-app
-  CONTAINER_APP_NAME: bookhaven-app
-  RESOURCE_GROUP: bookhaven-rg
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
-
-      - name: Run linting
-        run: npm run lint
-
-      - name: Run type checking
-        run: npm run type-check
-
-      - name: Build application
-        run: npm run build
-
-      - name: Test Docker build
-        run: |
-          docker build -f Dockerfile.dev -t bookstore-app:test .
-          echo "✅ Development Docker build successful"
-
   build-and-deploy:
-    needs: test
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
 
       - name: Log in to Azure
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to Azure Container Registry
-        uses: azure/docker-login@v1
-        with:
-          login-server: ${{ env.REGISTRY }}
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
-
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: azure/docker-login@v1
         with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          build-args: |
-            BUILDKIT_INLINE_CACHE=1
-          platforms: linux/amd64
+          login-server: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
+          username: ${{ secrets.AZURE_CLIENT_ID }}
+          password: ${{ secrets.AZURE_CLIENT_SECRET }}
+      - run: |
+          docker build -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ secrets.AZURE_CONTAINER_APP_NAME }}:${{ github.sha }} .
+          docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ secrets.AZURE_CONTAINER_APP_NAME }}:${{ github.sha }}
 
       - name: Deploy to Azure Container Apps
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            # Get the latest image tag
-            LATEST_TAG=$(az acr repository show-tags --name bookhavenregistry --repository bookstore-app --orderby time_desc --output tsv --query '[0]')
-            
-            echo "🚀 Deploying image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$LATEST_TAG"
-            
-            # Update the container app with the latest image
             az containerapp update \
-              --name ${{ env.CONTAINER_APP_NAME }} \
-              --resource-group ${{ env.RESOURCE_GROUP }} \
-              --image ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$LATEST_TAG \
-              --set-env-vars NODE_ENV=production,NEXT_TELEMETRY_DISABLED=1 \
-              --cpu 1.0 \
-              --memory 2.0Gi \
-              --min-replicas 1 \
-              --max-replicas 3 \
-              --scale-rule-name http-scaling \
-              --scale-rule-type http \
-              --scale-rule-http-concurrency 50
-
-      - name: Wait for deployment
-        run: |
-          echo "⏳ Waiting for deployment to complete..."
-          sleep 60
-
-      - name: Verify deployment
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            # Get the container app URL
-            APP_URL=$(az containerapp show --name ${{ env.CONTAINER_APP_NAME }} --resource-group ${{ env.RESOURCE_GROUP }} --query properties.configuration.ingress.fqdn --output tsv)
-            
-            echo "🌐 Application URL: http://$APP_URL"
-            
-            # Test the application with retries
-            for i in {1..5}; do
-              echo "🏥 Health check attempt $i..."
-              if curl -f http://$APP_URL/api/health; then
-                echo "✅ Health check passed!"
-                break
-              else
-                echo "❌ Health check failed, retrying in 30 seconds..."
-                sleep 30
-              fi
-            done
-            
-            # Final health check
-            if ! curl -f http://$APP_URL/api/health; then
-              echo "❌ Final health check failed!"
-              exit 1
-            fi
-            
-            echo "🎉 Deployment completed successfully!"
-            echo "🌐 Application URL: http://$APP_URL"
-
-      - name: Notify deployment status
-        if: always()
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            if [ "${{ job.status }}" == "success" ]; then
-              echo "✅ Deployment successful!"
-              echo "🌐 Application URL: http://$(az containerapp show --name ${{ env.CONTAINER_APP_NAME }} --resource-group ${{ env.RESOURCE_GROUP }} --query properties.configuration.ingress.fqdn --output tsv)"
-              echo "📊 Monitor your app at: https://portal.azure.com/#@/resource/subscriptions/$(az account show --query id -o tsv)/resourceGroups/${{ env.RESOURCE_GROUP }}/providers/Microsoft.App/containerApps/${{ env.CONTAINER_APP_NAME }}"
-            else
-              echo "❌ Deployment failed!"
-              echo "🔍 Check the logs: az containerapp logs show --name ${{ env.CONTAINER_APP_NAME }} --resource-group ${{ env.RESOURCE_GROUP }}"
-              exit 1
-            fi
-
-  notify:
-    needs: [test, build-and-deploy]
-    runs-on: ubuntu-latest
-    if: always()
-    steps:
-      - name: Deployment Summary
-        run: |
-          echo "📋 Deployment Summary"
-          echo "=================="
-          echo "✅ Test job: ${{ needs.test.result }}"
-          echo "✅ Build and Deploy job: ${{ needs.build-and-deploy.result }}"
-          
-          if [ "${{ needs.test.result }}" == "success" ] && [ "${{ needs.build-and-deploy.result }}" == "success" ]; then
-            echo "🎉 All jobs completed successfully!"
-            echo "🚀 Application deployed to Azure Container Apps"
-          else
-            echo "❌ Some jobs failed. Check the logs above."
-            exit 1
-          fi 
+              --name ${{ secrets.AZURE_CONTAINER_APP_NAME }} \
+              --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+              --image ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ secrets.AZURE_CONTAINER_APP_NAME }}:${{ github.sha }} 
