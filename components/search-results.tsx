@@ -12,6 +12,8 @@ interface SearchResultsProps {
   onFiltersToggle: () => void
   currentSort: string
   currentView: 'grid' | 'list'
+  gridSize?: '2x2' | '4x4' | '6x6'
+  onGridSizeChange?: (size: '2x2' | '4x4' | '6x6') => void
 }
 
 export function SearchResults({
@@ -20,16 +22,17 @@ export function SearchResults({
   onViewChange,
   onFiltersToggle,
   currentSort,
-  currentView
+  currentView,
+  gridSize,
+  onGridSizeChange
 }: SearchResultsProps) {
   return (
-    <div className="flex items-center justify-between mb-6 p-4 bg-muted rounded-lg">
-      <div className="flex items-center gap-2">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 p-4 bg-muted rounded-lg gap-2 sm:gap-4">
+      <div className="flex items-center gap-2 flex-wrap">
         <Search className="h-4 w-4 text-muted-foreground" />
         <span className="text-sm text-muted-foreground">
           {resultsCount} result{resultsCount !== 1 ? 's' : ''} found
         </span>
-        
         <Select value={currentSort} onValueChange={onSortChange}>
           <SelectTrigger className="w-48">
             <SelectValue placeholder="Sort by" />
@@ -48,8 +51,7 @@ export function SearchResults({
           </SelectContent>
         </Select>
       </div>
-
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         <Button
           variant="outline"
           size="sm"
@@ -59,13 +61,13 @@ export function SearchResults({
           <Filter className="h-4 w-4" />
           Filters
         </Button>
-
-        <div className="flex border rounded-md">
+        <div className="flex items-center gap-0.5 border rounded-md bg-background">
           <Button
             variant={currentView === 'grid' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => onViewChange('grid')}
             className="rounded-r-none"
+            aria-label="Grid view"
           >
             <Grid3X3 className="h-4 w-4" />
           </Button>
@@ -74,9 +76,22 @@ export function SearchResults({
             size="sm"
             onClick={() => onViewChange('list')}
             className="rounded-l-none"
+            aria-label="List view"
           >
             <List className="h-4 w-4" />
           </Button>
+          {currentView === 'grid' && gridSize && onGridSizeChange && (
+            <Select value={gridSize} onValueChange={onGridSizeChange}>
+              <SelectTrigger className="w-[90px] rounded-none border-l-0 border-r-0 h-9 text-xs px-2">
+                <SelectValue placeholder="Grid" />
+              </SelectTrigger>
+              <SelectContent align="end">
+                <SelectItem value="2x2">2 x 2</SelectItem>
+                <SelectItem value="4x4">4 x 4</SelectItem>
+                <SelectItem value="6x6">6 x 6</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
         </div>
       </div>
     </div>

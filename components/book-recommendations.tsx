@@ -7,7 +7,7 @@ import { BookRating } from "@/components/book/book-rating"
 import { Button } from "@/components/ui/button"
 import { Heart, ShoppingCart } from "lucide-react"
 import { WishlistCartContext } from "@/components/wishlist-cart-context"
-import { getAllBooks } from "@/lib/book-data"
+import { getAllBooks } from "@/data/books";
 
 interface Book {
   id: string

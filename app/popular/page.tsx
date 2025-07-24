@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { WishlistCartContext } from "@/components/wishlist-cart-context"
 import { useContext } from "react"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
+import { SearchResults } from "@/components/search-results"
 
 // Popular books data
 const popularBooks = [
@@ -127,6 +128,8 @@ export default function PopularBooksPage() {
   const [sortBy, setSortBy] = useState("popularity")
   const [filterCategory, setFilterCategory] = useState("all")
   const [filteredBooks, setFilteredBooks] = useState(popularBooks)
+  const [currentView, setCurrentView] = useState<'grid' | 'list'>('grid');
+  const [gridSize, setGridSize] = useState<'2x2' | '4x4' | '6x6'>('4x4');
 
   // Filter and sort books
   useEffect(() => {
@@ -161,6 +164,20 @@ export default function PopularBooksPage() {
   }, [searchQuery, sortBy, filterCategory])
 
   const categories = ["all", ...Array.from(new Set(popularBooks.map(book => book.category)))]
+
+  const getGridClass = () => {
+    if (currentView === 'list') return 'grid-cols-1';
+    switch (gridSize) {
+      case '2x2':
+        return 'grid-cols-1 sm:grid-cols-2';
+      case '4x4':
+        return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
+      case '6x6':
+        return 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6';
+      default:
+        return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -273,81 +290,121 @@ export default function PopularBooksPage() {
         </p>
       </div>
 
-      {/* Books Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="mb-4">
+        <SearchResults
+          resultsCount={filteredBooks.length}
+          onSortChange={setSortBy}
+          onViewChange={setCurrentView}
+          onFiltersToggle={() => {}}
+          currentSort={sortBy}
+          currentView={currentView}
+          gridSize={gridSize}
+          onGridSizeChange={setGridSize}
+        />
+      </div>
+      <div className={`grid gap-6 ${getGridClass()}`}>
         {filteredBooks.map((book) => {
           const isInCart = cart.includes(book.id)
           const isInWishlist = wishlist.includes(book.id)
 
           return (
-            <Card key={book.id} className="group hover:shadow-lg transition-shadow duration-200">
-              <CardHeader className="pb-3">
-                <div className="relative">
-                  <Link href={`/books/${book.id}`}>
-                    <div className="relative aspect-[3/4] overflow-hidden rounded-lg">
-                      <Image
-                        src={book.image}
-                        alt={book.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-200"
-                      />
-                    </div>
+            currentView === 'list' ? (
+              <div key={book.id} className="flex gap-4 items-center bg-card rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow p-4">
+                <div className="relative h-32 w-24 flex-shrink-0">
+                  <Link href={`/books/${book.id}`} className="absolute inset-0">
+                    <Image
+                      src={book.image}
+                      alt={book.title}
+                      fill
+                      className="object-cover rounded"
+                    />
                   </Link>
-                  <div className="absolute top-2 left-2 flex gap-1">
-                    {book.isNew && (
-                      <Badge variant="secondary" className="text-xs">
-                        New
-                      </Badge>
-                    )}
-                    {book.isBestseller && (
-                      <Badge variant="destructive" className="text-xs">
-                        Bestseller
-                      </Badge>
-                    )}
-                  </div>
                 </div>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="space-y-2">
-                  <div>
-                    <Link href={`/books/${book.id}`} className="hover:text-primary">
-                      <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors">
-                        {book.title}
-                      </h3>
-                    </Link>
-                    <p className="text-sm text-muted-foreground">{book.author}</p>
-                  </div>
-                  
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-2">
+                    {book.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-2">{book.author}</p>
                   <div className="flex items-center gap-1">
                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                     <span className="text-sm font-medium">{book.rating}</span>
                     <span className="text-sm text-muted-foreground">({book.reviews})</span>
                   </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold text-foreground">${book.price}</span>
-                    <div className="flex gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => toggleWishlist(book.id)}
-                        className={`h-8 w-8 ${isInWishlist ? 'text-red-500' : 'text-muted-foreground hover:text-red-500'}`}
-                      >
-                        <Heart className={`h-4 w-4 ${isInWishlist ? 'fill-current' : ''}`} />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => addToCart(book.id)}
-                        className={`h-8 w-8 ${isInCart ? 'text-green-500' : 'text-muted-foreground hover:text-green-500'}`}
-                      >
-                        <ShoppingCart className={`h-4 w-4 ${isInCart ? 'fill-current' : ''}`} />
-                      </Button>
-                    </div>
+                  <div className="mt-2 flex items-center gap-4">
+                    <span className="font-semibold text-foreground text-sm">${book.price}</span>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            ) : (
+              <Card key={book.id} className="group hover:shadow-lg transition-shadow duration-200">
+                <CardHeader className="pb-3">
+                  <div className="relative">
+                    <Link href={`/books/${book.id}`}>
+                      <div className="relative aspect-[3/4] overflow-hidden rounded-lg">
+                        <Image
+                          src={book.image}
+                          alt={book.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-200"
+                        />
+                      </div>
+                    </Link>
+                    <div className="absolute top-2 left-2 flex gap-1">
+                      {book.isNew && (
+                        <Badge variant="secondary" className="text-xs">
+                          New
+                        </Badge>
+                      )}
+                      {book.isBestseller && (
+                        <Badge variant="destructive" className="text-xs">
+                          Bestseller
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="space-y-2">
+                    <div>
+                      <Link href={`/books/${book.id}`} className="hover:text-primary">
+                        <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors">
+                          {book.title}
+                        </h3>
+                      </Link>
+                      <p className="text-sm text-muted-foreground">{book.author}</p>
+                    </div>
+                    
+                    <div className="flex items-center gap-1">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span className="text-sm font-medium">{book.rating}</span>
+                      <span className="text-sm text-muted-foreground">({book.reviews})</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-bold text-foreground">${book.price}</span>
+                      <div className="flex gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => toggleWishlist(book.id)}
+                          className={`h-8 w-8 ${isInWishlist ? 'text-red-500' : 'text-muted-foreground hover:text-red-500'}`}
+                        >
+                          <Heart className={`h-4 w-4 ${isInWishlist ? 'fill-current' : ''}`} />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => addToCart(book.id)}
+                          className={`h-8 w-8 ${isInCart ? 'text-green-500' : 'text-muted-foreground hover:text-green-500'}`}
+                        >
+                          <ShoppingCart className={`h-4 w-4 ${isInCart ? 'fill-current' : ''}`} />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )
           )
         })}
       </div>

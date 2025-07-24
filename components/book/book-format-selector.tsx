@@ -11,8 +11,8 @@ interface Format {
 }
 
 interface BookFormatSelectorProps {
-  formats: Format[]
-  onFormatChange?: (format: Format) => void
+  formats: Format[];
+  onFormatChange?: (format: Format) => void;
 }
 
 export function BookFormatSelector({ formats, onFormatChange }: BookFormatSelectorProps) {

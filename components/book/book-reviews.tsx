@@ -14,6 +14,7 @@ interface BookReviewsProps {
   averageRating: number;
   totalReviews: number;
   editorialReview?: string;
+  currentUser?: string; // Pass current user as prop if needed
 }
 
 export const BookReviews: React.FC<BookReviewsProps> = ({
@@ -21,6 +22,7 @@ export const BookReviews: React.FC<BookReviewsProps> = ({
   averageRating,
   totalReviews,
   editorialReview,
+  currentUser,
 }) => {
   const [showWriteReview, setShowWriteReview] = useState(false);
   const [reviewsData, setReviewsData] = useState<CustomerReview[]>(reviews);
@@ -52,7 +54,7 @@ export const BookReviews: React.FC<BookReviewsProps> = ({
                 ...(review.replies || []),
                 {
                   id: `reply-${Date.now()}`,
-                  author: 'Demo User',
+                  author: currentUser || '', // Use currentUser prop
                   date: new Date().toLocaleDateString(),
                   content: replyContent,
                 },
@@ -71,7 +73,7 @@ export const BookReviews: React.FC<BookReviewsProps> = ({
   const handleSubmitReview = (rating: number, title: string, content: string) => {
     const review: CustomerReview = {
       id: `review-${Date.now()}`,
-      author: 'Demo User',
+      author: currentUser || '', // Use currentUser prop
       date: new Date().toLocaleDateString(),
       rating,
       title,

@@ -12,158 +12,19 @@ import { useContext } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Carousel, CarouselSlide } from '@/components/Carousel';
+import { heroSlides } from "@/data/heroSlides";
+import { featuredBooks } from "@/data/featuredBooks";
+import { categories } from "@/data/categories";
+import { stats } from "@/data/stats";
+import { mockBooks } from "@/data/mockBooks";
 
 export default function HomePage() {
   const { wishlist, toggleWishlist, cart, addToCart } = useContext(WishlistCartContext)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isPlaying, setIsPlaying] = useState(true)
 
-  // Hero carousel data
-  const heroSlides: CarouselSlide[] = [
-    {
-      id: 'mark-twain',
-      title: 'MARK TWAIN',
-      author: 'Ron Chernow',
-      description: "Dive deep into the life of one of America's literary geniuses through the eyes of a master biographer.",
-      image: '/images/mark-twain-cover.webp',
-      link: '/books/mark-twain',
-      badge: '$5 OFF',
-      type: 'Deals',
-    },
-    {
-      id: 'fearless',
-      title: 'FEARLESS',
-      author: 'Lauren Roberts',
-      description: 'A gripping tale of courage and resilience in the face of adversity.',
-      image: '/images/fearless-cover.webp',
-      link: '/books/fearless',
-      badge: 'NEW',
-      type: 'New Release',
-    },
-    {
-      id: 'the-tenant',
-      title: 'THE TENANT',
-      author: 'Freida McFadden',
-      description: 'A psychological thriller that will keep you guessing until the very end.',
-      image: '/images/the-tenant-cover.webp',
-      link: '/books/the-tenant',
-      badge: 'BESTSELLER',
-      type: 'Bestseller',
-    },
-    {
-      id: 'silver-feet-and-her-wonder',
-      title: 'SILVER FEET AND HER WONDER',
-      author: 'Nana Ndlovana-Mthimkhulu',
-      description: 'A captivating story of wonder and discovery that will enchant readers of all ages.',
-      image: '/images/silver-feet-cover.png',
-      link: '/books/silver-feet-and-her-wonder',
-      badge: 'FEATURED',
-      type: 'Featured',
-    },
-  ];
-
   // Use slides in fixed order to prevent hydration mismatch
   const slides = heroSlides
-
-  // Featured books data
-  const featuredBooks = [
-    {
-      id: "silver-feet-and-her-wonder",
-      title: "Silver Feet and Her Wonder",
-      author: "Nana Ndlovana-Mthimkhulu",
-      coverImage: "/images/silver-feet-cover.png",
-      rating: 4.8,
-      reviewCount: 37,
-      price: 24.99,
-      originalPrice: 29.99,
-      inStock: true,
-      link: "/books/silver-feet-and-her-wonder",
-      badge: "Bestseller"
-    },
-    {
-      id: "the-monkey-blanket",
-      title: "The Monkey Blanket",
-      author: "Nana Ndlovana-Mthimkhulu",
-      coverImage: "/images/the-monkey-blanket-cover.png",
-      rating: 4.9,
-      reviewCount: 45,
-      price: 19.99,
-      originalPrice: 24.99,
-      inStock: true,
-      link: "/books/the-monkey-blanket",
-      badge: "New Release"
-    },
-    {
-      id: "fearless",
-      title: "Fearless",
-      author: "Lauren Roberts",
-      coverImage: "/images/fearless-cover.webp",
-      rating: 4.9,
-      reviewCount: 41,
-      price: 22.99,
-      originalPrice: 27.99,
-      inStock: false,
-      link: "/books/fearless",
-      badge: "Popular"
-    },
-    {
-      id: "great-big-beautiful-life",
-      title: "Great Big Beautiful Life",
-      author: "Emily Henry",
-      coverImage: "/images/great-big-beautiful-life-cover.webp",
-      rating: 4.5,
-      reviewCount: 33,
-      price: 18.99,
-      originalPrice: 23.99,
-      inStock: true,
-      link: "/books/great-big-beautiful-life",
-      badge: "Staff Pick"
-    },
-    {
-      id: "the-tenant",
-      title: "The Tenant",
-      author: "Freida McFadden",
-      coverImage: "/images/the-tenant-cover.webp",
-      rating: 4.8,
-      reviewCount: 39,
-      price: 21.99,
-      originalPrice: 26.99,
-      inStock: true,
-      link: "/books/the-tenant",
-      badge: "Thriller"
-    },
-    {
-      id: "remarkably-bright-creatures",
-      title: "Remarkably Bright Creatures",
-      author: "Shelby Van Pelt",
-      coverImage: "/images/remarkably-bright-creatures-cover.webp",
-      rating: 4.6,
-      reviewCount: 35,
-      price: 20.99,
-      originalPrice: 25.99,
-      inStock: true,
-      link: "/books/remarkably-bright-creatures",
-      badge: "Award Winner"
-    }
-  ]
-
-  // Categories data
-  const categories = [
-    { name: "Fiction", icon: BookOpen, count: "2.5k", color: "bg-blue-500", link: "/categories/fiction" },
-    { name: "Non-Fiction", icon: BookOpen, count: "1.8k", color: "bg-green-500", link: "/categories/nonfiction" },
-    { name: "Audiobooks", icon: Headphones, count: "1.2k", color: "bg-purple-500", link: "/audiobooks" },
-    { name: "Children's", icon: BookOpen, count: "950", color: "bg-yellow-500", link: "/categories/children" },
-    { name: "Academic", icon: BookOpen, count: "750", color: "bg-red-500", link: "/categories/academic" },
-    { name: "Magazines", icon: BookOpen, count: "500", color: "bg-indigo-500", link: "/categories/magazines" }
-  ]
-
-  // Stats data
-  const stats = [
-    { label: "Books Available", value: "50,000+", icon: BookOpen },
-    { label: "Happy Customers", value: "100,000+", icon: Users },
-    { label: "Audiobooks", value: "15,000+", icon: Headphones },
-    { label: "Fast Delivery", value: "24-48h", icon: Clock }
-  ]
 
   // Auto-play carousel
   useEffect(() => {
@@ -254,12 +115,6 @@ export default function HomePage() {
   const handleToggleWishlist = (bookId: string) => {
     toggleWishlist(bookId)
   }
-
-  const mockBooks = [
-    { id: "silver-feet-and-her-wonder", title: "Silver Feet and Her Wonder", author: "Nana Ndlovana-Mthimkhulu", coverImage: "/images/silver-feet-cover.png", rating: 4.8, reviewCount: 37, price: 24.99, originalPrice: 29.99, stock: 10, link: "/books/silver-feet-and-her-wonder", badge: "NEW" },
-    { id: "the-monkey-blanket", title: "The Monkey Blanket", author: "Nana Ndlovana-Mthimkhulu", coverImage: "/images/the-monkey-blanket-cover.png", rating: 4.9, reviewCount: 45, price: 19.99, originalPrice: 24.99, stock: 0, link: "/books/the-monkey-blanket", badge: "BESTSELLER" },
-    { id: "fearless", title: "Fearless", author: "Lauren Roberts", coverImage: "/images/fearless-cover.webp", rating: 4.9, reviewCount: 41, price: 29.99, originalPrice: 34.99, stock: 5, link: "/books/fearless", badge: "DEAL" },
-  ];
 
   return (
     <div className="min-h-screen">

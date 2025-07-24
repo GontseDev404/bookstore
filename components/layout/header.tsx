@@ -12,9 +12,21 @@ import { Card, CardContent } from "@/components/ui/card"
 import { SearchContext } from "@/components/search-context"
 import { WishlistCartContext } from "@/components/wishlist-cart-context"
 import { EnhancedSidebar } from "./enhanced-sidebar"
-import { supabase } from '@/lib/supabaseClient';
+import type { LucideIcon } from "lucide-react";
 
-export function Header() {
+const quickFilterIconMap: Record<string, LucideIcon> = {
+  BookOpen,
+  Headphones,
+  Star,
+};
+
+export interface HeaderProps {
+  searchSuggestions: string[];
+  popularSearches: { term: string; count: string }[];
+  quickFilters: { name: string; icon?: string; active: boolean }[];
+}
+
+export function Header({ searchSuggestions, popularSearches, quickFilters }: HeaderProps) {
   const { searchQuery, setSearchQuery } = useContext(SearchContext)
   const { cart } = useContext(WishlistCartContext)
   const router = useRouter()
@@ -24,47 +36,12 @@ export function Header() {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data?.user));
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-    return () => {
-      listener?.subscription.unsubscribe();
-    };
+    setUser({ id: 'mock-user', email: 'mock@example.com' });
   }, []);
 
-  // Search suggestions data
-  const searchSuggestions = [
-    "The Great Gatsby",
-    "To Kill a Mockingbird", 
-    "1984",
-    "Pride and Prejudice",
-    "The Catcher in the Rye",
-    "Lord of the Flies",
-    "Animal Farm",
-    "The Hobbit",
-    "Fahrenheit 451",
-    "Brave New World"
-  ]
-
-  // Popular searches
-  const popularSearches = [
-    { term: "Bestsellers", count: "2.3k" },
-    { term: "New Releases", count: "1.8k" },
-    { term: "Audiobooks", count: "1.5k" },
-    { term: "Children's Books", count: "1.2k" },
-    { term: "Science Fiction", count: "950" },
-    { term: "Mystery", count: "890" },
-  ]
-
-  // Quick filters
-  const quickFilters = [
-    { name: "All Books", icon: BookOpen, active: true },
-    { name: "Audiobooks", icon: Headphones, active: false },
-    { name: "Bestsellers", icon: Star, active: false },
-    { name: "New Releases", active: false },
-    { name: "Staff Picks", active: false },
-  ]
+  // Remove the hardcoded arrays for searchSuggestions, popularSearches, quickFilters
+  // Use the props instead throughout the component
+  // For quickFilters, map icon string to LucideIcon if needed
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -166,17 +143,20 @@ export function Header() {
                     <div className="mb-3 sm:mb-4">
                       <h4 className="text-xs sm:text-sm font-medium text-foreground mb-2">Quick Filters</h4>
                       <div className="flex flex-wrap gap-1 sm:gap-2">
-                        {quickFilters.map((filter, index) => (
-                          <Badge
-                            key={index}
-                            variant={filter.active ? "secondary" : "outline"}
-                            className="cursor-pointer hover:bg-primary hover:text-primary-foreground text-xs"
-                            onClick={() => handleQuickFilterClick(filter.name)}
-                          >
-                            {filter.icon && <filter.icon className="h-2 w-2 sm:h-3 sm:w-3 mr-1" />}
-                            {filter.name}
-                          </Badge>
-                        ))}
+                        {quickFilters.map((filter, index) => {
+                          const Icon = filter.icon ? quickFilterIconMap[filter.icon] : undefined;
+                          return (
+                            <Badge
+                              key={index}
+                              variant={filter.active ? "secondary" : "outline"}
+                              className="cursor-pointer hover:bg-primary hover:text-primary-foreground text-xs"
+                              onClick={() => handleQuickFilterClick(filter.name)}
+                            >
+                              {Icon && <Icon className="h-2 w-2 sm:h-3 sm:w-3 mr-1" />}
+                              {filter.name}
+                            </Badge>
+                          );
+                        })}
                       </div>
                     </div>
 
@@ -289,7 +269,7 @@ export function Header() {
                   size="icon"
                   className="h-8 w-8 sm:h-9 sm:w-9"
                   aria-label="Logout"
-                  onClick={async () => { await supabase.auth.signOut(); }}
+                  onClick={() => setUser(null)}
                 >
                   <span className="sr-only">Logout</span>
                   Logout

@@ -17,8 +17,8 @@ interface RelatedBook {
 }
 
 interface RelatedBooksProps {
-  title: string
-  books: RelatedBook[]
+  title: string;
+  books: RelatedBook[];
 }
 
 export const RelatedBooks: React.FC<RelatedBooksProps> = ({ title, books }) => {

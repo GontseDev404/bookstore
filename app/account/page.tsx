@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
 import { User, Mail, Phone, MapPin, CreditCard, Shield, Bell, Key, Trash2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,26 +33,29 @@ export default function AccountPage() {
 
   useEffect(() => {
     const fetchUserAndProfile = async () => {
-      const { data: authData } = await supabase.auth.getUser();
-      const user = authData?.user;
-      setUser(user);
+      // Mock user data for demonstration
+      setUser({
+        id: "mock-user-id",
+        email: "test@example.com",
+        email_confirmed_at: "2023-10-27T10:00:00Z",
+        created_at: "2023-10-27T09:00:00Z",
+        user_metadata: {
+          first_name: "John",
+          last_name: "Doe",
+          phone: "123-456-7890",
+          address: "123 Main St, Anytown, USA"
+        }
+      });
       setEmail(user?.email || "");
       setEmailVerified(user?.email_confirmed_at ? true : false);
       if (user) {
         // Fetch profile from 'profiles' table
-        const { data: profileData } = await supabase
-          .from("profiles")
-          .select("first_name, last_name, phone, address")
-          .eq("id", user.id)
-          .single();
-        if (profileData) {
-          setProfile({
-            firstName: profileData.first_name || "",
-            lastName: profileData.last_name || "",
-            phone: profileData.phone || "",
-            address: profileData.address || ""
-          });
-        }
+        setProfile({
+          firstName: user.user_metadata?.first_name || "",
+          lastName: user.user_metadata?.last_name || "",
+          phone: user.user_metadata?.phone || "",
+          address: user.user_metadata?.address || ""
+        });
       }
     };
     fetchUserAndProfile();
@@ -69,16 +71,15 @@ export default function AccountPage() {
       setLoading(false);
       return;
     }
-    // Upsert profile
-    const { error } = await supabase.from("profiles").upsert({
-      id: user.id,
-      first_name: profile.firstName,
-      last_name: profile.lastName,
-      phone: profile.phone,
-      address: profile.address
-    });
-    if (error) setError(error.message);
-    else setSuccess("Profile updated successfully!");
+    // Mock upsert profile
+    setProfile((prev: any) => ({
+      ...prev,
+      firstName: "Updated John",
+      lastName: "Updated Doe",
+      phone: "987-654-3210",
+      address: "456 Oak Ave, Othertown, USA"
+    }));
+    setSuccess("Profile updated successfully!");
     setLoading(false);
   };
 
@@ -86,14 +87,13 @@ export default function AccountPage() {
     setVerifyLoading(true);
     setVerifySuccess(null);
     setVerifyError(null);
-    const { error } = await supabase.auth.resend({ type: 'signup', email });
-    if (error) setVerifyError(error.message);
-    else setVerifySuccess('Verification email sent!');
+    // Mock resend verification
+    setVerifySuccess('Verification email sent!');
     setVerifyLoading(false);
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    // Mock logout
     router.push('/');
   };
 

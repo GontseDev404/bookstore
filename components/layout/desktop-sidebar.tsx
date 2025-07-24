@@ -130,7 +130,7 @@ export function DesktopSidebar() {
       }`}
     >
       <div className={`sidebar-icon flex h-8 w-8 items-center justify-center rounded-md transition-colors ${
-        isActive ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground'
+        isActive ? 'bg-primary text-primary-foreground' : 'bg-transparent text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground'
       }`}>
         <item.icon className="h-4 w-4" />
       </div>
@@ -139,7 +139,7 @@ export function DesktopSidebar() {
           <div className="flex items-center gap-2">
             <span>{item.label}</span>
             {item.badge && (
-              <Badge variant="secondary" className="sidebar-badge ml-auto text-xs">
+              <Badge variant="default" className="sidebar-badge ml-auto text-xs">
                 {item.badge}
               </Badge>
             )}

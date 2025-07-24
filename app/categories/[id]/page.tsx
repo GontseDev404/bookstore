@@ -10,8 +10,9 @@ interface CategoryPageProps {
   }
 }
 
-export default function CategoryPage({ params }: CategoryPageProps) {
-  const categoryId = params.id
+export default async function CategoryPage(props: CategoryPageProps) {
+  const { params } = await props;
+  const categoryId = params.id;
 
   // Category data mapping
   const categoryData = {

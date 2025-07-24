@@ -3,28 +3,46 @@
 import Link from "next/link"
 import { Facebook, Twitter, Instagram, Mail, Phone, MapPin, ArrowUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import type { LucideIcon } from "lucide-react";
 
-export function Footer() {
+const iconMap: Record<string, LucideIcon> = {
+  Facebook,
+  Twitter,
+  Instagram,
+  Mail,
+  Phone,
+  MapPin,
+};
+
+export interface FooterProps {
+  companyInfo: {
+    name: string;
+    description: string;
+    socialLinks: { label: string; href: string; icon: string }[];
+  };
+  quickLinks: { label: string; href: string }[];
+  customerService: { label: string; href: string }[];
+  contactInfo: { type: string; value: string; icon: string }[];
+}
+
+export function Footer({ companyInfo, quickLinks, customerService, contactInfo }: FooterProps) {
   return (
     <footer className="border-t bg-background">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-foreground">BookHaven</h3>
-            <p className="text-muted-foreground">
-              Your trusted source for books, audiobooks, and literary discoveries.
-            </p>
+            <h3 className="text-lg font-semibold text-foreground">{companyInfo.name}</h3>
+            <p className="text-muted-foreground">{companyInfo.description}</p>
             <div className="flex space-x-4">
-              <Link href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary" aria-label="Facebook">
-                <Facebook className="h-5 w-5" />
-              </Link>
-              <Link href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary" aria-label="Twitter">
-                <Twitter className="h-5 w-5" />
-              </Link>
-              <Link href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary" aria-label="Instagram">
-                <Instagram className="h-5 w-5" />
-              </Link>
+              {companyInfo.socialLinks.map((link) => {
+                const Icon = iconMap[link.icon] || Mail;
+                return (
+                  <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary" aria-label={link.label}>
+                    <Icon className="h-5 w-5" />
+                  </a>
+                );
+              })}
             </div>
           </div>
 
@@ -32,31 +50,13 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-foreground">Quick Links</h3>
             <ul className="space-y-2">
-              <li>
-                <Link href="/books" className="text-muted-foreground hover:text-primary">
-                  All Books
-                </Link>
-              </li>
-              <li>
-                <Link href="/bestsellers" className="text-muted-foreground hover:text-primary">
-                  Bestsellers
-                </Link>
-              </li>
-              <li>
-                <Link href="/new-releases" className="text-muted-foreground hover:text-primary">
-                  New Releases
-                </Link>
-              </li>
-              <li>
-                <Link href="/deals" className="text-muted-foreground hover:text-primary">
-                  Deals
-                </Link>
-              </li>
-              <li>
-                <Link href="/categories" className="text-muted-foreground hover:text-primary">
-                  Categories
-                </Link>
-              </li>
+              {quickLinks.map((link) => (
+                <li key={link.label}>
+                  <a href={link.href} className="text-muted-foreground hover:text-primary">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -64,31 +64,13 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-foreground">Customer Service</h3>
             <ul className="space-y-2">
-              <li>
-                <Link href="/contact" className="text-muted-foreground hover:text-primary">
-                  Contact Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/shipping" className="text-muted-foreground hover:text-primary">
-                  Shipping Info
-                </Link>
-              </li>
-              <li>
-                <Link href="/returns" className="text-muted-foreground hover:text-primary">
-                  Returns
-                </Link>
-              </li>
-              <li>
-                <Link href="/faq" className="text-muted-foreground hover:text-primary">
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link href="/account" className="text-muted-foreground hover:text-primary">
-                  My Account
-                </Link>
-              </li>
+              {customerService.map((link) => (
+                <li key={link.label}>
+                  <a href={link.href} className="text-muted-foreground hover:text-primary">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -96,18 +78,15 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-foreground">Contact Info</h3>
             <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Mail className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">support@bookhaven.com</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Phone className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">+1 (555) 123-4567</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <MapPin className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">123 Book Street, Literary City</span>
-              </div>
+              {contactInfo.map((info) => {
+                const Icon = iconMap[info.icon] || Mail;
+                return (
+                  <div key={info.type} className="flex items-center space-x-2">
+                    <Icon className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">{info.value}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

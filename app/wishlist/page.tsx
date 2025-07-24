@@ -9,86 +9,14 @@ import { WishlistCartContext } from "@/components/wishlist-cart-context"
 import { BookRating } from "@/components/book/book-rating"
 import Link from "next/link"
 import Image from "next/image"
+import { wishlistBooks } from "@/data/wishlistBooks"
+import { SearchResults } from "@/components/search-results"
 
 export default function WishlistPage() {
   const { wishlist, toggleWishlist, addToCart } = useContext(WishlistCartContext)
   const [isLoading, setIsLoading] = useState(false)
-
-  // Mock wishlist books data
-  const wishlistBooks = [
-    {
-      id: "silver-feet-and-her-wonder",
-      title: "Silver Feet and Her Wonder",
-      author: "Nana Ndlovana-Mthimkhulu",
-      coverImage: "/images/silver-feet-cover.png",
-      rating: 4.8,
-      reviewCount: 37,
-      price: 24.99,
-      originalPrice: 29.99,
-      inStock: true,
-      link: "/books/silver-feet-and-her-wonder",
-    },
-    {
-      id: "the-monkey-blanket",
-      title: "The Monkey Blanket",
-      author: "Nana Ndlovana-Mthimkhulu",
-      coverImage: "/images/the-monkey-blanket-cover.png",
-      rating: 4.9,
-      reviewCount: 45,
-      price: 19.99,
-      originalPrice: 24.99,
-      inStock: true,
-      link: "/books/the-monkey-blanket",
-    },
-    {
-      id: "fearless",
-      title: "Fearless",
-      author: "Lauren Roberts",
-      coverImage: "/images/fearless-cover.webp",
-      rating: 4.9,
-      reviewCount: 41,
-      price: 22.99,
-      originalPrice: 27.99,
-      inStock: false,
-      link: "/books/fearless",
-    },
-    {
-      id: "great-big-beautiful-life",
-      title: "Great Big Beautiful Life",
-      author: "Emily Henry",
-      coverImage: "/images/great-big-beautiful-life-cover.webp",
-      rating: 4.5,
-      reviewCount: 33,
-      price: 18.99,
-      originalPrice: 23.99,
-      inStock: true,
-      link: "/books/great-big-beautiful-life",
-    },
-    {
-      id: "the-tenant",
-      title: "The Tenant",
-      author: "Freida McFadden",
-      coverImage: "/images/the-tenant-cover.webp",
-      rating: 4.8,
-      reviewCount: 39,
-      price: 21.99,
-      originalPrice: 26.99,
-      inStock: true,
-      link: "/books/the-tenant",
-    },
-    {
-      id: "remarkably-bright-creatures",
-      title: "Remarkably Bright Creatures",
-      author: "Shelby Van Pelt",
-      coverImage: "/images/remarkably-bright-creatures-cover.webp",
-      rating: 4.6,
-      reviewCount: 35,
-      price: 20.99,
-      originalPrice: 25.99,
-      inStock: true,
-      link: "/books/remarkably-bright-creatures",
-    },
-  ]
+  const [currentView, setCurrentView] = useState<'grid' | 'list'>('grid');
+  const [gridSize, setGridSize] = useState<'2x2' | '4x4' | '6x6'>('4x4');
 
   const handleAddToCart = async (bookId: string) => {
     setIsLoading(true)
@@ -154,6 +82,20 @@ export default function WishlistPage() {
 
   // Filter books that are actually in the wishlist
   const filteredWishlistBooks = wishlistBooks.filter(book => wishlist.includes(book.id))
+
+  const getGridClass = () => {
+    if (currentView === 'list') return 'grid-cols-1';
+    switch (gridSize) {
+      case '2x2':
+        return 'grid-cols-1 sm:grid-cols-2';
+      case '4x4':
+        return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
+      case '6x6':
+        return 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6';
+      default:
+        return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
+    }
+  };
 
   if (filteredWishlistBooks.length === 0) {
     return (
@@ -235,20 +177,61 @@ export default function WishlistPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="mb-4">
+        <SearchResults
+          resultsCount={filteredWishlistBooks.length}
+          onSortChange={() => {}}
+          onViewChange={setCurrentView}
+          onFiltersToggle={() => {}}
+          currentSort={''}
+          currentView={currentView}
+          gridSize={gridSize}
+          onGridSizeChange={setGridSize}
+        />
+      </div>
+      <div className={`grid gap-6 ${getGridClass()}`}>
         {filteredWishlistBooks.map((book) => (
-          <Card key={book.id} className="group hover:shadow-lg transition-shadow">
-            <div className="relative">
-              <Link href={book.link}>
-                <div className="aspect-[3/4] relative overflow-hidden">
+          currentView === 'list' ? (
+            <div key={book.id} className="flex gap-4 items-center bg-card rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow p-4">
+              <div className="relative h-32 w-24 flex-shrink-0">
+                <Link href={book.link} className="absolute inset-0">
                   <Image
                     src={book.coverImage}
                     alt={book.title}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="object-cover rounded"
                   />
+                </Link>
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-2">
+                  {book.title}
+                </h3>
+                <p className="text-sm text-muted-foreground mb-2">{book.author}</p>
+                <BookRating rating={book.rating} reviewCount={book.reviewCount} />
+                <div className="mt-2 flex items-center gap-4">
+                  <span className="font-semibold text-foreground text-sm">${book.price}</span>
+                  {book.originalPrice > book.price && (
+                    <span className="text-xs text-muted-foreground line-through">
+                      ${book.originalPrice}
+                    </span>
+                  )}
                 </div>
-              </Link>
+              </div>
+            </div>
+          ) : (
+            <Card key={book.id} className="group hover:shadow-lg transition-shadow">
+              <div className="relative">
+                <Link href={book.link}>
+                  <div className="aspect-[3/4] relative overflow-hidden">
+                    <Image
+                      src={book.coverImage}
+                      alt={book.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                </Link>
               
               {/* Stock Status Badge */}
               <Badge 
@@ -330,6 +313,7 @@ export default function WishlistPage() {
               </div>
             </CardContent>
           </Card>
+          )
         ))}
       </div>
     </div>

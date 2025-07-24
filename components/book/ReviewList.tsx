@@ -2,6 +2,8 @@ import React from 'react';
 import { CustomerReview } from './ReviewItem';
 import { ReviewItem } from './ReviewItem';
 
+export type { CustomerReview } from './ReviewItem';
+
 interface ReviewListProps {
   reviews: CustomerReview[];
   helpfulVotes: Record<string, { count: number; userVoted: boolean }>;

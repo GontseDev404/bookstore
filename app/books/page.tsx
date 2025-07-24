@@ -16,7 +16,7 @@ import { SearchSuggestions } from "@/components/search-suggestions"
 import { SearchResults } from "@/components/search-results"
 import { BookRecommendations } from "@/components/book-recommendations"
 import { RecentlyViewed } from "@/components/recently-viewed"
-import { getAllBooks } from "@/lib/book-data"
+import { getAllBooks } from "@/data/books";
 
 // Get all books from centralized data source
 const allBooks = getAllBooks()
@@ -44,6 +44,7 @@ function BooksPageContent() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [currentSort, setCurrentSort] = useState('relevance');
   const [currentView, setCurrentView] = useState<'grid' | 'list'>('grid');
+  const [gridSize, setGridSize] = useState<'2x2' | '4x4' | '6x6'>('4x4');
   const [filterCategory, setFilterCategory] = useState("all");
   const [searchFilters, setSearchFilters] = useState<SearchFiltersType>({
     query: "",
@@ -129,6 +130,21 @@ function BooksPageContent() {
     setShowSuggestions(e.target.value.length > 0)
   }
   
+  // Helper to get grid classes based on gridSize
+  const getGridClass = () => {
+    if (currentView === 'list') return 'grid-cols-1';
+    switch (gridSize) {
+      case '2x2':
+        return 'grid-cols-1 sm:grid-cols-2';
+      case '4x4':
+        return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
+      case '6x6':
+        return 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6';
+      default:
+        return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
+    }
+  };
+  
   if (!mounted) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -173,6 +189,20 @@ function BooksPageContent() {
         {searchQuery && (
           <p className="text-sm text-muted-foreground mt-2">Searching for: "{searchQuery}"</p>
         )}
+      </div>
+
+      {/* Toggle UI for grid/list and grid size */}
+      <div className="mb-4">
+        <SearchResults
+          resultsCount={sortedBooks.length}
+          onSortChange={setCurrentSort}
+          onViewChange={setCurrentView}
+          onFiltersToggle={() => setShowFilters(!showFilters)}
+          currentSort={currentSort}
+          currentView={currentView}
+          gridSize={gridSize}
+          onGridSizeChange={setGridSize}
+        />
       </div>
 
       {/* Search and Filters */}
@@ -240,54 +270,46 @@ function BooksPageContent() {
       </div>
 
       {/* Books Grid/List */}
-      <div className={`grid gap-6 ${
-        currentView === 'grid' 
-          ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
-          : 'grid-cols-1'
-      }`}>
+      <div className={`grid gap-6 ${getGridClass()}`}>
         {sortedBooks.map((book) => (
-          <div key={book.id} className="group">
-            <div className="bg-card rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-[3/4] relative overflow-hidden">
+          currentView === 'list' ? (
+            <div key={book.id} className="flex gap-4 items-center bg-card rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow p-4">
+              <div className="relative h-32 w-24 flex-shrink-0">
                 <Link href={`/books/${book.id}`} className="absolute inset-0">
                   <Image
                     src={book.coverImage}
                     alt={book.title}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="object-cover rounded"
                   />
                 </Link>
-                <Button
-                  variant={wishlist.includes(book.id) ? "default" : "outline"}
-                  size="icon"
-                  onClick={() => toggleWishlist(book.id)}
-                  aria-label="Add to wishlist"
-                  className="absolute top-2 right-2 z-10 h-8 w-8"
-                >
-                  <Heart fill={wishlist.includes(book.id) ? "#e11d48" : "none"} className="h-4 w-4 text-pink-600" />
-                </Button>
               </div>
-              <div className="p-4">
+              <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-2">
                   {book.title}
                 </h3>
                 <p className="text-sm text-muted-foreground mb-2">{book.author}</p>
                 <BookRating rating={book.rating} reviewCount={book.reviewCount} />
-                <div className="mt-3 flex items-center justify-between">
-                  <div className="flex flex-col min-w-0 flex-1">
-                    <span className="font-semibold text-foreground text-sm truncate">${book.price}</span>
-                    {book.originalPrice && book.originalPrice > book.price && (
-                      <span className="text-xs text-muted-foreground line-through truncate">
-                        ${book.originalPrice}
-                      </span>
-                    )}
-                  </div>
+                <div className="mt-2 flex items-center gap-4">
+                  <span className="font-semibold text-foreground text-sm">${book.price}</span>
+                  {book.originalPrice && book.originalPrice > book.price && (
+                    <span className="text-xs text-muted-foreground line-through">
+                      ${book.originalPrice}
+                    </span>
+                  )}
                 </div>
-                <div className="mt-3">
+                <div className="mt-2 flex gap-2">
+                  <Button
+                    variant={wishlist.includes(book.id) ? "default" : "outline"}
+                    size="icon"
+                    onClick={() => toggleWishlist(book.id)}
+                    aria-label="Add to wishlist"
+                  >
+                    <Heart fill={wishlist.includes(book.id) ? "#e11d48" : "none"} className="h-4 w-4 text-pink-600" />
+                  </Button>
                   <Button
                     variant={cart.includes(book.id) ? "default" : "outline"}
                     size="sm"
-                    className="w-full"
                     onClick={() =>
                       cart.includes(book.id)
                         ? removeFromCart(book.id)
@@ -300,7 +322,63 @@ function BooksPageContent() {
                 </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <div key={book.id} className="group">
+              <div className="bg-card rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                <div className="aspect-[3/4] relative overflow-hidden">
+                  <Link href={`/books/${book.id}`} className="absolute inset-0">
+                    <Image
+                      src={book.coverImage}
+                      alt={book.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </Link>
+                  <Button
+                    variant={wishlist.includes(book.id) ? "default" : "outline"}
+                    size="icon"
+                    onClick={() => toggleWishlist(book.id)}
+                    aria-label="Add to wishlist"
+                    className="absolute top-2 right-2 z-10 h-8 w-8"
+                  >
+                    <Heart fill={wishlist.includes(book.id) ? "#e11d48" : "none"} className="h-4 w-4 text-pink-600" />
+                  </Button>
+                </div>
+                <div className="p-4">
+                  <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-2">
+                    {book.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-2">{book.author}</p>
+                  <BookRating rating={book.rating} reviewCount={book.reviewCount} />
+                  <div className="mt-3 flex items-center justify-between">
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <span className="font-semibold text-foreground text-sm truncate">${book.price}</span>
+                      {book.originalPrice && book.originalPrice > book.price && (
+                        <span className="text-xs text-muted-foreground line-through truncate">
+                          ${book.originalPrice}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <Button
+                      variant={cart.includes(book.id) ? "default" : "outline"}
+                      size="sm"
+                      className="w-full"
+                      onClick={() =>
+                        cart.includes(book.id)
+                          ? removeFromCart(book.id)
+                          : addToCart(book.id)
+                      }
+                    >
+                      <ShoppingCart className="h-4 w-4 mr-1" />
+                      {cart.includes(book.id) ? "Remove from Cart" : "Add to Cart"}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
         ))}
         {sortedBooks.length === 0 && (
           <div className="col-span-full text-center py-12">

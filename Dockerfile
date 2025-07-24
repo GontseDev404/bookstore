@@ -20,6 +20,9 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+# Copy environment files
+# COPY .env .env
+# COPY .env.local .env.local
 
 # Add build arguments for Supabase configuration
 ARG NEXT_PUBLIC_SUPABASE_URL

@@ -1,11 +1,9 @@
 "use client"
 
 import React, { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
 import { ProfileDetails, ProfileData } from '@/components/profile/ProfileDetails';
 import { PasswordChangeForm } from '@/components/profile/PasswordChangeForm';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useRequireAuth } from '@/hooks/useRequireAuth';
 
 interface User {
   id: string;
@@ -20,7 +18,6 @@ const initialProfile: ProfileData = {
 };
 
 const ProfilePage: React.FC = () => {
-  useRequireAuth();
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<ProfileData>(initialProfile);
   const [email, setEmail] = useState('');
@@ -35,25 +32,16 @@ const ProfilePage: React.FC = () => {
 
   useEffect(() => {
     const fetchUserAndProfile = async () => {
-      const { data: authData } = await supabase.auth.getUser();
-      const user = authData?.user;
-      if (user) {
-        setUser({ id: user.id, email: user.email || '' });
-        setEmail(user.email || '');
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('first_name, last_name, phone, address')
-          .eq('id', user.id)
-          .single();
-        if (profileData) {
-          setProfile({
-            firstName: profileData.first_name || '',
-            lastName: profileData.last_name || '',
-            phone: profileData.phone || '',
-            address: profileData.address || '',
-          });
-        }
-      }
+      // Mock user data for demonstration
+      setUser({ id: 'mock-user-id', email: 'test@example.com' });
+      setEmail('test@example.com');
+      // Mock profile data for demonstration
+      setProfile({
+        firstName: 'John',
+        lastName: 'Doe',
+        phone: '123-456-7890',
+        address: '123 Main St, Anytown, USA',
+      });
     };
     fetchUserAndProfile();
   }, []);
@@ -72,15 +60,8 @@ const ProfilePage: React.FC = () => {
       setLoading(false);
       return;
     }
-    const { error } = await supabase.from('profiles').upsert({
-      id: user.id,
-      first_name: profile.firstName,
-      last_name: profile.lastName,
-      phone: profile.phone,
-      address: profile.address,
-    });
-    if (error) setError(error.message);
-    else setSuccess('Profile updated successfully!');
+    // Mock update for demonstration
+    setSuccess('Profile updated successfully!');
     setLoading(false);
   };
 
@@ -92,9 +73,8 @@ const ProfilePage: React.FC = () => {
       setPasswordError('Not logged in');
       return;
     }
-    const { error } = await supabase.auth.updateUser({ password: newPassword });
-    if (error) setPasswordError(error.message);
-    else setPasswordSuccess('Password changed successfully!');
+    // Mock password change for demonstration
+    setPasswordSuccess('Password changed successfully!');
     setCurrentPassword('');
     setNewPassword('');
   };

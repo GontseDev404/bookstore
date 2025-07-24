@@ -28,7 +28,6 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
-import { supabase } from "@/lib/supabaseClient";
 import { useTheme } from "next-themes";
 
 export default function SettingsPage() {
@@ -58,38 +57,25 @@ export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
 
   useEffect(() => {
-    async function fetchProfile() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const uid = user.id;
-        setUserId(typeof uid === 'string' ? uid : null);
-        const { data: profileData } = await supabase
-          .from("profiles")
-          .select("first_name, last_name, phone, email, email_notifications, order_updates, promotional_emails, newsletter, two_factor_auth, public_profile, dark_mode, language")
-          .eq("id", user.id)
-          .single();
-        if (profileData) {
-          setProfile({
-            firstName: profileData.first_name || "",
-            lastName: profileData.last_name || "",
-            email: profileData.email || "",
-            phone: profileData.phone || "",
-            password: ""
-          });
-          setSettings({
-            emailNotifications: profileData.email_notifications ?? true,
-            orderUpdates: profileData.order_updates ?? true,
-            promotionalEmails: profileData.promotional_emails ?? false,
-            newsletter: profileData.newsletter ?? true,
-            twoFactorAuth: profileData.two_factor_auth ?? false,
-            publicProfile: profileData.public_profile ?? false,
-            darkMode: profileData.dark_mode ?? false,
-            language: profileData.language || "English"
-          });
-        }
-      }
-    }
-    fetchProfile();
+    // Mock data for demonstration
+    setUserId("mock-user-id-123"); // Replace with actual user ID from auth
+    setProfile({
+      firstName: "John",
+      lastName: "Doe",
+      email: "john.doe@example.com",
+      phone: "+1 (555) 123-4567",
+      password: ""
+    });
+    setSettings({
+      emailNotifications: true,
+      orderUpdates: true,
+      promotionalEmails: false,
+      newsletter: true,
+      twoFactorAuth: false,
+      publicProfile: false,
+      darkMode: false,
+      language: "English"
+    });
   }, [])
 
   const handleProfileChange = (key: string, value: string) => {
@@ -105,23 +91,9 @@ export default function SettingsPage() {
     setSuccess(null)
     setError(null)
     if (!userId) return
-    const { error } = await supabase.from("profiles").upsert({
-      id: userId,
-      first_name: profile.firstName,
-      last_name: profile.lastName,
-      phone: profile.phone,
-      email: profile.email,
-      email_notifications: settings.emailNotifications,
-      order_updates: settings.orderUpdates,
-      promotional_emails: settings.promotionalEmails,
-      newsletter: settings.newsletter,
-      two_factor_auth: settings.twoFactorAuth,
-      public_profile: settings.publicProfile,
-      dark_mode: settings.darkMode,
-      language: settings.language
-    })
-    if (error) setError(error.message)
-    else setSuccess("Profile updated successfully!")
+    // Simulate saving to backend
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setSuccess("Profile updated successfully!")
     setLoading(false)
   }
 
@@ -130,12 +102,9 @@ export default function SettingsPage() {
     setLoading(true)
     setSuccess(null)
     setError(null)
-    // Delete from Supabase Auth
-    const { error: authError } = await supabase.auth.admin.deleteUser(userId)
-    // Delete from profiles table
-    const { error: profileError } = await supabase.from("profiles").delete().eq("id", userId)
-    if (authError || profileError) setError(authError?.message ?? profileError?.message ?? null)
-    else setSuccess("Account deleted. You will be logged out.")
+    // Simulate deletion
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setSuccess("Account deleted. You will be logged out.")
     setLoading(false)
     // Optionally, redirect or log out user
   }
@@ -152,7 +121,8 @@ export default function SettingsPage() {
   }
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    // Simulate logout
+    await new Promise(resolve => setTimeout(resolve, 500));
     router.push('/');
   };
 

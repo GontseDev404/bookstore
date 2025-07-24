@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
 import { AuthTabs } from '@/components/auth/AuthTabs';
 import { EmailAuthForm } from '@/components/auth/EmailAuthForm';
 import { GoogleAuthButton } from '@/components/auth/GoogleAuthButton';
@@ -30,13 +29,13 @@ const AuthPage: React.FC = () => {
     setError(null);
     setSuccess(null);
     if (mode === 'sign-up') {
-      const { error } = await supabase.auth.signUp({ email, password });
-      if (error) setError(error.message);
-      else setSuccess('Check your email for a confirmation link.');
+      // Mock sign-up
+      console.log('Mock sign-up:', { email, password });
+      setSuccess('Mock sign-up successful! Check your email.');
     } else {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) setError(error.message);
-      else setSuccess('Signed in successfully!');
+      // Mock sign-in
+      console.log('Mock sign-in:', { email, password });
+      setSuccess('Mock signed in successfully!');
     }
     setLoading(false);
   };
@@ -46,8 +45,9 @@ const AuthPage: React.FC = () => {
     setLoading(true);
     setError(null);
     setSuccess(null);
-    const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
-    if (error) setError(error.message);
+    // Mock Google sign-in
+    console.log('Mock Google sign-in');
+    setSuccess('Mock signed in with Google!');
     setLoading(false);
   };
 
@@ -57,12 +57,10 @@ const AuthPage: React.FC = () => {
     setLoading(true);
     setError(null);
     setSuccess(null);
-    const { error } = await supabase.auth.signInWithOtp({ phone });
-    if (error) setError(error.message);
-    else {
-      setOtpSent(true);
-      setSuccess('OTP sent! Check your phone.');
-    }
+    // Mock phone OTP
+    console.log('Mock phone OTP send:', phone);
+    setOtpSent(true);
+    setSuccess('Mock OTP sent! Check your phone.');
     setLoading(false);
   };
   const handlePhoneVerify = async (e: React.FormEvent) => {
@@ -70,9 +68,9 @@ const AuthPage: React.FC = () => {
     setLoading(true);
     setError(null);
     setSuccess(null);
-    const { error } = await supabase.auth.verifyOtp({ phone, token: otp, type: 'sms' });
-    if (error) setError(error.message);
-    else setSuccess('Signed in successfully!');
+    // Mock phone OTP verify
+    console.log('Mock phone OTP verify:', { phone, otp });
+    setSuccess('Mock signed in successfully!');
     setLoading(false);
   };
 
@@ -81,9 +79,9 @@ const AuthPage: React.FC = () => {
     setLoading(true);
     setError(null);
     setSuccess(null);
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
-    if (error) setError(error.message);
-    else setSuccess('Password reset email sent!');
+    // Mock forgot password
+    console.log('Mock forgot password:', email);
+    setSuccess('Mock password reset email sent!');
     setLoading(false);
   };
 
