@@ -17,6 +17,7 @@ import { SearchResults } from "@/components/search-results"
 import { BookRecommendations } from "@/components/book-recommendations"
 import { RecentlyViewed } from "@/components/recently-viewed"
 import { getAllBooks } from "@/data/books";
+import { FilterControls } from "@/components/FilterControls";
 
 // Get all books from centralized data source
 const allBooks = getAllBooks()
@@ -206,67 +207,50 @@ function BooksPageContent() {
       </div>
 
       {/* Search and Filters */}
-      <div className="mb-6 space-y-4">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <div className="search-and-filters-container bg-muted/50 rounded-lg p-4 mb-8">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
+          {/* Primary Search Section */}
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
+              className="pl-10 w-full h-12 text-lg"
               placeholder="Search by title, author, or ISBN..."
               value={searchQuery}
               onChange={handleSearchInput}
               onFocus={() => setShowSuggestions(searchQuery.length > 0)}
-              className="pl-10"
+              aria-label="Search books"
+            />
+            {/* Suggestions dropdown, absolutely positioned */}
+            <SearchSuggestions
+              query={searchQuery}
+              isVisible={showSuggestions && searchQuery.length > 0}
+              onSelect={handleSuggestionSelect}
+              onClose={() => setShowSuggestions(false)}
             />
           </div>
-          <div className="flex gap-2">
-            <Select value={filterCategory} onValueChange={setFilterCategory}>
-              <SelectTrigger className="w-[140px]">
-                <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category} value={category}>
-                    {category === "all" ? "All Categories" : category}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={currentSort} onValueChange={setCurrentSort}>
-              <SelectTrigger className="w-[140px]">
-                <SortAsc className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="relevance">Relevance</SelectItem>
-                <SelectItem value="title-asc">Title A-Z</SelectItem>
-                <SelectItem value="title-desc">Title Z-A</SelectItem>
-                <SelectItem value="author-asc">Author A-Z</SelectItem>
-                <SelectItem value="author-desc">Author Z-A</SelectItem>
-                <SelectItem value="price-asc">Price: Low to High</SelectItem>
-                <SelectItem value="price-desc">Price: High to Low</SelectItem>
-                <SelectItem value="rating-desc">Highest Rated</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          {/* Secondary Controls */}
+          <FilterControls
+            filterCategory={filterCategory}
+            setFilterCategory={setFilterCategory}
+            currentSort={currentSort}
+            setCurrentSort={setCurrentSort}
+            categories={categories}
+          />
         </div>
-      </div>
-
-      {/* Results Count */}
-      <div className="mb-6">
-        <p className="text-sm text-muted-foreground">
-          Showing {sortedBooks.length} of {books.length} books
-        </p>
-      </div>
-
-      {/* Search Suggestions */}
-      <div className="relative">
-        <SearchSuggestions
-          query={searchQuery}
-          isVisible={showSuggestions && searchQuery.length > 0}
-          onSelect={handleSuggestionSelect}
-          onClose={() => setShowSuggestions(false)}
-        />
+        {/* Results summary and clear filters */}
+        <div className="flex items-center justify-between mt-2">
+          <span className="text-sm text-muted-foreground">
+            Showing {sortedBooks.length} of {books.length} books
+          </span>
+          {(filterCategory !== "all" || currentSort !== "relevance") && (
+            <Button variant="outline" size="sm" onClick={() => {
+              setFilterCategory("all");
+              setCurrentSort("relevance");
+            }}>
+              Clear Filters
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Books Grid/List */}
