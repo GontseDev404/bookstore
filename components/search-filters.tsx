@@ -61,149 +61,153 @@ export function SearchFilters({ onFiltersChange, isOpen, onToggle }: SearchFilte
   }
 
   return (
-    <Card className={`transition-all duration-300 ${isOpen ? 'max-h-screen' : 'max-h-0 overflow-hidden'}`}>
-      <CardHeader className="pb-4">
+    <Card className={`transition-all duration-300 ${isOpen ? 'max-h-screen' : 'max-h-0 overflow-hidden'} p-2 sm:p-4`}>
+      <CardHeader className="pb-2 sm:pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Filter className="h-5 w-5" />
+          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+            <Filter className="h-4 w-4 sm:h-5 sm:w-5" />
             Advanced Search
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onToggle}>
+          <Button variant="ghost" size="icon" onClick={onToggle} className="h-7 w-7">
             <X className="h-4 w-4" />
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Search Query */}
-        <div className="space-y-2">
-          <Label htmlFor="search-query">Search Query</Label>
-          <Input
-            id="search-query"
-            placeholder="Search by title, author, ISBN..."
-            value={filters.query}
-            onChange={(e) => handleFilterChange('query', e.target.value)}
-          />
-        </div>
+      <CardContent className="space-y-3 sm:space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
+          {/* Search Query */}
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="search-query" className="text-xs">Search</Label>
+            <Input
+              id="search-query"
+              placeholder="Title, author, ISBN..."
+              value={filters.query}
+              onChange={(e) => handleFilterChange('query', e.target.value)}
+              className="h-8 text-xs"
+            />
+          </div>
 
-        {/* Category Filter */}
-        <div className="space-y-2">
-          <Label>Category</Label>
-          <Select value={filters.category} onValueChange={(value) => handleFilterChange('category', value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="All Categories" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              <SelectItem value="fiction">Fiction</SelectItem>
-              <SelectItem value="nonfiction">Non-Fiction</SelectItem>
-              <SelectItem value="children">Children's Books</SelectItem>
-              <SelectItem value="mystery">Mystery & Thriller</SelectItem>
-              <SelectItem value="romance">Romance</SelectItem>
-              <SelectItem value="scifi">Science Fiction</SelectItem>
-              <SelectItem value="biography">Biography</SelectItem>
-              <SelectItem value="history">History</SelectItem>
-              <SelectItem value="self-help">Self-Help</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+          {/* Category Filter */}
+          <div className="flex flex-col gap-1">
+            <Label className="text-xs">Category</Label>
+            <Select value={String(filters.category)} onValueChange={(value: string) => handleFilterChange('category', value)}>
+              <SelectTrigger className="h-8 text-xs">
+                <SelectValue placeholder="All Categories" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="Fiction">Fiction</SelectItem>
+                <SelectItem value="Non-Fiction">Non-Fiction</SelectItem>
+                <SelectItem value="Audiobooks">Audiobooks</SelectItem>
+                <SelectItem value="Children's">Children's</SelectItem>
+                <SelectItem value="Academic">Academic</SelectItem>
+                <SelectItem value="Magazines">Magazines</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-        {/* Price Range */}
-        <div className="space-y-2">
-          <Label>Price Range: ${filters.priceRange[0]} - ${filters.priceRange[1]}</Label>
-          <Slider
-            value={filters.priceRange}
-            onValueChange={(value) => handleFilterChange('priceRange', value)}
-            max={100}
-            min={0}
-            step={5}
-            className="w-full"
-          />
-        </div>
+          {/* Price Range */}
+          <div className="flex flex-col gap-1">
+            <Label className="text-xs">Price: ${filters.priceRange[0]} - ${filters.priceRange[1]}</Label>
+            <Slider
+              value={filters.priceRange as [number, number]}
+              onValueChange={(value: number[]) => handleFilterChange('priceRange', value as [number, number])}
+              max={100}
+              min={0}
+              step={5}
+              className="w-full"
+            />
+          </div>
 
-        {/* Rating Filter */}
-        <div className="space-y-2">
-          <Label>Minimum Rating</Label>
-          <div className="flex items-center gap-2">
-            {[1, 2, 3, 4, 5].map((star) => (
+          {/* Rating Filter */}
+          <div className="flex flex-col gap-1">
+            <Label className="text-xs">Min Rating</Label>
+            <div className="flex items-center gap-1">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <Button
+                  key={star}
+                  variant={filters.rating >= star ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleFilterChange('rating', star)}
+                  className="p-1 h-7 w-7"
+                >
+                  <Star className="h-3 w-3" />
+                </Button>
+              ))}
               <Button
-                key={star}
-                variant={filters.rating >= star ? "default" : "outline"}
+                variant="outline"
                 size="sm"
-                onClick={() => handleFilterChange('rating', star)}
-                className="p-1"
+                onClick={() => handleFilterChange('rating', 0)}
+                className="h-7 w-7 text-xs"
               >
-                <Star className="h-4 w-4" />
+                Any
               </Button>
-            ))}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleFilterChange('rating', 0)}
-            >
-              Any
-            </Button>
+            </div>
           </div>
-        </div>
 
-        {/* Format Filter */}
-        <div className="space-y-2">
-          <Label>Format</Label>
-          <div className="space-y-2">
-            {['Hardcover', 'Paperback', 'E-book', 'Audiobook'].map((format) => (
-              <div key={format} className="flex items-center space-x-2">
+          {/* Format Filter */}
+          <div className="flex flex-col gap-1">
+            <Label className="text-xs">Format</Label>
+            <div className="flex flex-wrap gap-2">
+              {['Hardcover', 'Paperback', 'E-book', 'Audiobook'].map((format) => (
+                <div key={format} className="flex items-center space-x-1">
+                  <Checkbox
+                    id={format}
+                    checked={filters.format.includes(format)}
+                    onChange={(e) => {
+                      const checked = (e.target as HTMLInputElement).checked;
+                      const newFormats = checked
+                        ? [...filters.format, format]
+                        : filters.format.filter((f: string) => f !== format)
+                      handleFilterChange('format', newFormats)
+                    }}
+                    className="h-4 w-4"
+                  />
+                  <Label htmlFor={format} className="text-xs">{format}</Label>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Author Filter */}
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="author-filter" className="text-xs">Author</Label>
+            <Input
+              id="author-filter"
+              placeholder="Filter by author..."
+              value={filters.author}
+              onChange={(e) => handleFilterChange('author', e.target.value)}
+              className="h-8 text-xs"
+            />
+          </div>
+
+          {/* Availability Filters */}
+          <div className="flex flex-col gap-1">
+            <Label className="text-xs">Availability</Label>
+            <div className="flex flex-wrap gap-2">
+              <div className="flex items-center space-x-1">
                 <Checkbox
-                  id={format}
-                  checked={filters.format.includes(format)}
-                  onChange={(e) => {
-                    const checked = (e.target as HTMLInputElement).checked;
-                    const newFormats = checked
-                      ? [...filters.format, format]
-                      : filters.format.filter(f => f !== format)
-                    handleFilterChange('format', newFormats)
-                  }}
+                  id="in-stock"
+                  checked={filters.inStock}
+                  onChange={(e) => handleFilterChange('inStock', (e.target as HTMLInputElement).checked)}
+                  className="h-4 w-4"
                 />
-                <Label htmlFor={format}>{format}</Label>
+                <Label htmlFor="in-stock" className="text-xs">In Stock</Label>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Author Filter */}
-        <div className="space-y-2">
-          <Label htmlFor="author-filter">Author</Label>
-          <Input
-            id="author-filter"
-            placeholder="Filter by author..."
-            value={filters.author}
-            onChange={(e) => handleFilterChange('author', e.target.value)}
-          />
-        </div>
-
-        {/* Availability Filters */}
-        <div className="space-y-2">
-          <Label>Availability</Label>
-          <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="in-stock"
-                checked={filters.inStock}
-                onChange={(e) => handleFilterChange('inStock', (e.target as HTMLInputElement).checked)}
-              />
-              <Label htmlFor="in-stock">In Stock</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="on-sale"
-                checked={filters.onSale}
-                onChange={(e) => handleFilterChange('onSale', (e.target as HTMLInputElement).checked)}
-              />
-              <Label htmlFor="on-sale">On Sale</Label>
+              <div className="flex items-center space-x-1">
+                <Checkbox
+                  id="on-sale"
+                  checked={filters.onSale}
+                  onChange={(e) => handleFilterChange('onSale', (e.target as HTMLInputElement).checked)}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="on-sale" className="text-xs">On Sale</Label>
+              </div>
             </div>
           </div>
         </div>
-
         {/* Clear Filters */}
-        <Button variant="outline" onClick={clearFilters} className="w-full">
+        <Button variant="outline" onClick={clearFilters} className="w-full h-8 text-xs mt-2">
           Clear All Filters
         </Button>
       </CardContent>

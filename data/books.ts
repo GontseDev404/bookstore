@@ -295,6 +295,36 @@ With stunning illustrations that bring the vibrant pond ecosystem to life and ly
     ],
     relatedBooks: [],
     authorMessage: "This thriller explores the depths of human depravity and the struggle for identity."
+  },
+  "mark-twain": {
+    id: "mark-twain",
+    title: "Mark Twain",
+    author: "Ron Chernow",
+    coverImage: "/images/mark-twain.jpg",
+    rating: 4.7,
+    reviewCount: 25,
+    description: "A definitive biography of Mark Twain by Pulitzer Prize-winning author Ron Chernow, exploring the life and legacy of America's greatest humorist.",
+    formats: [
+      { id: "hardcover", name: "Hardcover", price: 24.99, originalPrice: 29.99 },
+      { id: "ebook", name: "eBook", price: 14.99 }
+    ],
+    details: {
+      isbn: "9780525559540",
+      publisher: "Allen Lane",
+      publicationDate: "2024",
+      pages: 784,
+      language: "English",
+      age: "Adult"
+    },
+    editorialReviews: [
+      "A masterful portrait of Mark Twain, capturing both his genius and his contradictions.",
+      "Ron Chernow brings Twain to life in a way that is both scholarly and deeply human."
+    ],
+    relatedBooks: [
+      { id: "james", title: "James", author: "Percival Everett", coverImage: "/images/james-cover.webp", rating: 4.7, reviewCount: 27, price: 15.99 },
+      { id: "the-tenant", title: "The Tenant", author: "Freida McFadden", coverImage: "/images/the-tenant-cover.webp", rating: 4.8, reviewCount: 39, price: 21.99 }
+    ],
+    authorMessage: "In this biography, I sought to illuminate the many facets of Mark Twain's life, from his humor to his heartbreaks."
   }
 };
 

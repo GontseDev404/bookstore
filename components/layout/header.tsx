@@ -13,6 +13,7 @@ import { SearchContext } from "@/components/search-context"
 import { WishlistCartContext } from "@/components/wishlist-cart-context"
 import { EnhancedSidebar } from "./enhanced-sidebar"
 import type { LucideIcon } from "lucide-react";
+import { SearchFilters } from "@/components/search-filters"
 
 const quickFilterIconMap: Record<string, LucideIcon> = {
   BookOpen,
@@ -32,6 +33,7 @@ export function Header({ searchSuggestions, popularSearches, quickFilters }: Hea
   const router = useRouter()
   const [showSearchDropdown, setShowSearchDropdown] = useState(false)
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false)
+  const [filters, setFilters] = useState<any>(null)
   const searchRef = useRef<HTMLDivElement>(null)
   const [user, setUser] = useState<any>(null);
 
@@ -76,6 +78,11 @@ export function Header({ searchSuggestions, popularSearches, quickFilters }: Hea
     setSearchQuery(filter)
     setShowSearchDropdown(false)
     router.push(`/books?category=${encodeURIComponent(filter.toLowerCase())}`)
+  }
+
+  const handleFiltersChange = (newFilters: any) => {
+    setFilters(newFilters)
+    // Optionally, trigger a search or update results here
   }
 
   // Close dropdown when clicking outside
@@ -196,59 +203,20 @@ export function Header({ searchSuggestions, popularSearches, quickFilters }: Hea
                         </div>
                       </div>
                     </div>
-
-                    {/* Advanced Search */}
-                    {showAdvancedSearch && (
-                      <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t">
-                        <h4 className="text-xs sm:text-sm font-medium text-foreground mb-3">Advanced Search</h4>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                          <div>
-                            <label className="text-xs font-medium text-foreground">Genre</label>
-                            <select className="w-full mt-1 p-1 sm:p-2 border rounded text-xs">
-                              <option>All Genres</option>
-                              <option>Fiction</option>
-                              <option>Non-Fiction</option>
-                              <option>Mystery</option>
-                              <option>Romance</option>
-                              <option>Sci-Fi</option>
-                            </select>
-                          </div>
-                          <div>
-                            <label className="text-xs font-medium text-foreground">Format</label>
-                            <select className="w-full mt-1 p-1 sm:p-2 border rounded text-xs">
-                              <option>All Formats</option>
-                              <option>Hardcover</option>
-                              <option>Paperback</option>
-                              <option>Audiobook</option>
-                              <option>E-book</option>
-                            </select>
-                          </div>
-                          <div>
-                            <label className="text-xs font-medium text-foreground">Price Range</label>
-                            <select className="w-full mt-1 p-1 sm:p-2 border rounded text-xs">
-                              <option>Any Price</option>
-                              <option>Under $10</option>
-                              <option>$10 - $20</option>
-                              <option>$20 - $30</option>
-                              <option>Over $30</option>
-                            </select>
-                          </div>
-                          <div>
-                            <label className="text-xs font-medium text-foreground">Rating</label>
-                            <select className="w-full mt-1 p-1 sm:p-2 border rounded text-xs">
-                              <option>Any Rating</option>
-                              <option>4+ Stars</option>
-                              <option>3+ Stars</option>
-                              <option>2+ Stars</option>
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </div>
               )}
             </form>
+            {/* Render the SearchFilters panel outside the dropdown, toggled by the filter button */}
+            {showAdvancedSearch && (
+              <div className="absolute left-0 right-0 mt-2 z-50">
+                <SearchFilters
+                  onFiltersChange={handleFiltersChange}
+                  isOpen={showAdvancedSearch}
+                  onToggle={() => setShowAdvancedSearch(false)}
+                />
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-1 sm:gap-3">

@@ -206,52 +206,18 @@ function BooksPageContent() {
         />
       </div>
 
-      {/* Search and Filters */}
-      <div className="search-and-filters-container bg-muted/50 rounded-lg p-4 mb-8">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
-          {/* Primary Search Section */}
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              className="pl-10 w-full h-12 text-lg"
-              placeholder="Search by title, author, or ISBN..."
-              value={searchQuery}
-              onChange={handleSearchInput}
-              onFocus={() => setShowSuggestions(searchQuery.length > 0)}
-              aria-label="Search books"
-            />
-            {/* Suggestions dropdown, absolutely positioned */}
-            <SearchSuggestions
-              query={searchQuery}
-              isVisible={showSuggestions && searchQuery.length > 0}
-              onSelect={handleSuggestionSelect}
-              onClose={() => setShowSuggestions(false)}
-            />
-          </div>
-          {/* Secondary Controls */}
-          <FilterControls
-            filterCategory={filterCategory}
-            setFilterCategory={setFilterCategory}
-            currentSort={currentSort}
-            setCurrentSort={setCurrentSort}
-            categories={categories}
+      {/* Show the filter panel when showFilters is true */}
+      {showFilters && (
+        <div className="mb-6">
+          <SearchFilters
+            onFiltersChange={handleFiltersChange}
+            isOpen={showFilters}
+            onToggle={() => setShowFilters(false)}
           />
         </div>
-        {/* Results summary and clear filters */}
-        <div className="flex items-center justify-between mt-2">
-          <span className="text-sm text-muted-foreground">
-            Showing {sortedBooks.length} of {books.length} books
-          </span>
-          {(filterCategory !== "all" || currentSort !== "relevance") && (
-            <Button variant="outline" size="sm" onClick={() => {
-              setFilterCategory("all");
-              setCurrentSort("relevance");
-            }}>
-              Clear Filters
-            </Button>
-          )}
-        </div>
-      </div>
+      )}
+
+      {/* Search and Filters */}
 
       {/* Books Grid/List */}
       <div className={`grid gap-6 ${getGridClass()}`}>

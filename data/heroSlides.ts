@@ -6,7 +6,7 @@ export const heroSlides: CarouselSlide[] = [
     title: 'MARK TWAIN',
     author: 'Ron Chernow',
     description: "Dive deep into the life of one of America's literary geniuses through the eyes of a master biographer.",
-    image: '/images/mark-twain-cover.webp',
+    image: '/images/mark-twain.jpg',
     link: '/books/mark-twain',
     badge: '$5 OFF',
     type: 'Deals',
